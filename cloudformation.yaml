@@ -10,7 +10,29 @@ Parameters:
   EC2InstanceType: 
     Description: Instance type for iperf server and client
     Type: String
-    Default: m5.xlarge
+    Default: m5.xlarge  
+
+Mappings:
+  RegionMap:
+    ap-northeast-1:
+      NumberOfAvailabilityZones: 3 
+
+Conditions:
+  Has2AvailabilityZones:
+    !Or
+      - !Equals [ 2, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 3, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+  Has3AvailabilityZones:
+    !Or
+      - !Equals [ 3, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+  Has4AvailabilityZones:
+    !Or
+      - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
 
 Resources:
   # Define VPC and Subnet
@@ -21,43 +43,69 @@ Resources:
       Tags:
         - Key: Name
           Value: aws-ping-vpc-main
-  SubnetApNortheast1a:
+  SubnetFirst:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.0.0/24
-      AvailabilityZone: ap-northeast-1a
+      AvailabilityZone: 
+        Fn::Select:
+          - 0
+          - !GetAZs {Ref: "AWS::Region"}
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: aws-ping-subnet-ap-northeast-1a
-  SubnetApNortheast1aExtra:
-    Type: AWS::EC2::Subnet
-    Properties:
-      CidrBlock: 10.0.5.0/24
-      AvailabilityZone: ap-northeast-1a
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: aws-ping-subnet-ap-northeast-1a-extra
-  SubnetApNortheast1c:
+          Value: aws-ping-subnet-1
+  SubnetFirstExtra:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.1.0/24
-      AvailabilityZone: ap-northeast-1c
+      AvailabilityZone: 
+        Fn::Select: 
+          - 0
+          - !GetAZs {Ref: "AWS::Region"}
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: aws-ping-subnet-ap-northeast-1c
-  SubnetApNortheast1d:
+          Value: aws-ping-subnet-1-extra
+  SubnetSecond:
     Type: AWS::EC2::Subnet
+    Condition: Has2AvailabilityZones
     Properties:
       CidrBlock: 10.0.2.0/24
-      AvailabilityZone: ap-northeast-1d
+      AvailabilityZone: 
+        Fn::Select: 
+          - 1
+          - !GetAZs {Ref: "AWS::Region"}
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: aws-ping-subnet-ap-northeast-1d
-
+          Value: aws-ping-subnet-2
+  SubnetThird:
+    Type: AWS::EC2::Subnet
+    Condition: Has3AvailabilityZones
+    Properties:
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: 
+        Fn::Select: 
+          - 2
+          - !GetAZs {Ref: "AWS::Region"}
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: aws-ping-subnet-3
+  SubnetFourth:
+    Type: AWS::EC2::Subnet
+    Condition: Has4AvailabilityZones
+    Properties:
+      CidrBlock: 10.0.4.0/24
+      AvailabilityZone: 
+        Fn::Select: 
+          - 3
+          - !GetAZs {Ref: "AWS::Region"}
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: aws-ping-subnet-4
 
   # Define Internet Gateway and the attachment to VPC          
   InternetGateway:
@@ -87,26 +135,34 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
       RouteTableId: !Ref RouteTable      
-  SubnetRouteTableAssociationApNortheast1a:
+  SubnetFirstRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetApNortheast1a
-  SubnetRouteTableAssociationApNortheast1aExtra:
+      SubnetId: !Ref SubnetFirst
+  SubnetFirstExtraRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetApNortheast1aExtra
-  SubnetRouteTableAssociationApNortheast1c:
+      SubnetId: !Ref SubnetFirstExtra
+  SubnetSecondRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Has2AvailabilityZones
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetApNortheast1c
-  SubnetRouteTableAssociationApNortheast1d:
+      SubnetId: !Ref SubnetSecond
+  SubnetThirdRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Has3AvailabilityZones
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetApNortheast1d
+      SubnetId: !Ref SubnetThird
+  SubnetFourthRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Has4AvailabilityZones
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref SubnetFourth
 
   # Define Security Group and its inbound rules (= ingress).
   # The outbound (egress) rules are automatically set as "Allow All".
@@ -143,7 +199,7 @@ Resources:
       CidrIp: !Ref SSHLocation
 
   # EC2 instances
-  EC2InstanceApNortheast1a1:
+  EC2InstanceSubnetFirst:
     Type: AWS::EC2::Instance
     Properties: 
       ImageId: "ami-0d7ed3ddb85b521a6"
@@ -163,14 +219,14 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - !Ref SecurityGroup
-          SubnetId: !Ref SubnetApNortheast1a
+          SubnetId: !Ref SubnetFirst
           PrivateIpAddresses:
             - PrivateIpAddress: "10.0.0.5"
               Primary: true
       Tags:
       - Key: Name
-        Value: aws-ping-ec2-ap-northeast-1a-1
-  EC2InstanceApNortheast1a2:
+        Value: aws-ping-ec2-subnet-1
+  EC2InstanceSubnetFirstExtra:
     Type: AWS::EC2::Instance
     Properties: 
       ImageId: "ami-0d7ed3ddb85b521a6"
@@ -190,69 +246,16 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - !Ref SecurityGroup
-          SubnetId: !Ref SubnetApNortheast1a
-          PrivateIpAddresses:
-            - PrivateIpAddress: "10.0.0.6"
-              Primary: true
-      Tags:
-      - Key: Name
-        Value: aws-ping-ec2-ap-northeast-1a-2
-  EC2InstanceApNortheast1aExtra1:
-    Type: AWS::EC2::Instance
-    Properties: 
-      ImageId: "ami-0d7ed3ddb85b521a6"
-      InstanceType: !Ref EC2InstanceType
-      # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
-      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
-      KeyName: "demo-key-pair"
-      # https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/
-      UserData:
-        Fn::Base64: |
-            #!/bin/bash
-            yum -y install git
-            cd /home/ec2-user
-            git clone https://github.com/richardimaoka/aws-ping
-      NetworkInterfaces: 
-        - AssociatePublicIpAddress: true
-          DeviceIndex: "0"
-          GroupSet:
-            - !Ref SecurityGroup
-          SubnetId: !Ref SubnetApNortheast1aExtra
-          PrivateIpAddresses:
-            - PrivateIpAddress: "10.0.5.5"
-              Primary: true
-      Tags:
-      - Key: Name
-        Value: aws-ping-ec2-ap-northeast-1a-extra-1
-  EC2InstanceApNortheast1c1:
-    Type: AWS::EC2::Instance
-    Properties: 
-      ImageId: "ami-0d7ed3ddb85b521a6"
-      InstanceType: !Ref EC2InstanceType
-      # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
-      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
-      KeyName: "demo-key-pair"
-      # https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/
-      UserData:
-        Fn::Base64: |
-            #!/bin/bash
-            yum -y install git
-            cd /home/ec2-user
-            git clone https://github.com/richardimaoka/aws-ping
-      NetworkInterfaces: 
-        - AssociatePublicIpAddress: true
-          DeviceIndex: "0"
-          GroupSet:
-            - !Ref SecurityGroup
-          SubnetId: !Ref SubnetApNortheast1c
+          SubnetId: !Ref SubnetFirstExtra
           PrivateIpAddresses:
             - PrivateIpAddress: "10.0.1.5"
               Primary: true
       Tags:
       - Key: Name
-        Value: aws-ping-ec2-ap-northeast-1c-1
-  EC2InstanceApNortheast1d1:
+        Value: aws-ping-ec2-subnet-1-extra
+  EC2InstanceSubnetSecond:
     Type: AWS::EC2::Instance
+    Condition: Has2AvailabilityZones
     Properties: 
       ImageId: "ami-0d7ed3ddb85b521a6"
       InstanceType: !Ref EC2InstanceType
@@ -271,10 +274,67 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - !Ref SecurityGroup
-          SubnetId: !Ref SubnetApNortheast1d
+          SubnetId: !Ref SubnetSecond
           PrivateIpAddresses:
             - PrivateIpAddress: "10.0.2.5"
               Primary: true
       Tags:
       - Key: Name
-        Value: aws-ping-ec2-ap-northeast-1d-1        
+        Value: aws-ping-ec2-subnet-2
+  EC2InstanceSubnetThird:
+    Type: AWS::EC2::Instance
+    Condition: Has3AvailabilityZones
+    Properties: 
+      ImageId: "ami-0d7ed3ddb85b521a6"
+      InstanceType: !Ref EC2InstanceType
+      # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
+      KeyName: "demo-key-pair"
+      # https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/
+      UserData:
+        Fn::Base64: |
+            #!/bin/bash
+            yum -y install git
+            cd /home/ec2-user
+            git clone https://github.com/richardimaoka/aws-ping
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref SecurityGroup
+          SubnetId: !Ref SubnetThird
+          PrivateIpAddresses:
+            - PrivateIpAddress: "10.0.3.5"
+              Primary: true
+      Tags:
+      - Key: Name
+        Value: aws-ping-ec2-subnet-3
+  EC2InstanceSubnetFourth:
+    Type: AWS::EC2::Instance
+    Condition: Has4AvailabilityZones
+    Properties: 
+      ImageId: "ami-0d7ed3ddb85b521a6"
+      InstanceType: !Ref EC2InstanceType
+      # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
+      KeyName: "demo-key-pair"
+      # https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/
+      UserData:
+        Fn::Base64: |
+            #!/bin/bash
+            yum -y install git
+            cd /home/ec2-user
+            git clone https://github.com/richardimaoka/aws-ping
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref SecurityGroup
+          SubnetId: !Ref SubnetFourth
+          PrivateIpAddresses:
+            - PrivateIpAddress: "10.0.4.5"
+              Primary: true
+      Tags:
+      - Key: Name
+        Value: aws-ping-ec2-subnet-4
+
