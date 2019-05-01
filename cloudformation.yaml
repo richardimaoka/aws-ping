@@ -7,6 +7,7 @@ Parameters:
     MaxLength: "18"
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
     ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+    Default: 219.100.133.243/32
   EC2InstanceType: 
     Description: Instance type for iperf server and client
     Type: String
@@ -14,8 +15,56 @@ Parameters:
 
 Mappings:
   RegionMap:
+    eu-north-1:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.101
+    ap-south-1:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.102
+    eu-west-3:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.103
+    eu-west-2:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.104
+    eu-west-1:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.105
+    ap-northeast-2:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.106
     ap-northeast-1:
-      NumberOfAvailabilityZones: 3 
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.107
+    sa-east-1:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.108
+    ca-central-1:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.109
+    ap-southeast-1:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.110
+    ap-southeast-2:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.111
+    eu-central-1:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.112
+    us-east-1:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.113
+    us-east-2:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.114
+    us-west-1:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.115
+    us-west-2:
+      NumberOfAvailabilityZones: 3
+      RegionSubnet: 10.116
+
+    
 
 Conditions:
   Has2AvailabilityZones:
@@ -39,14 +88,22 @@ Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/16
+      # e.g. 10.101.0.0/16, where the second octet is replaced by mapping
+      CidrBlock: 
+        !Sub
+          - "${RegionSubnet}.0.0/16"
+          - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
       Tags:
         - Key: Name
           Value: aws-ping-vpc-main
   SubnetFirst:
     Type: AWS::EC2::Subnet
     Properties:
-      CidrBlock: 10.0.0.0/24
+      # e.g. 10.101.0.0/24, where the second octet is replaced by mapping
+      CidrBlock: 
+        !Sub
+          - "${RegionSubnet}.0.0/24"
+          - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
       AvailabilityZone: 
         Fn::Select:
           - 0
@@ -58,7 +115,11 @@ Resources:
   SubnetFirstExtra:
     Type: AWS::EC2::Subnet
     Properties:
-      CidrBlock: 10.0.1.0/24
+      # e.g. 10.101.1.0/24, where the second octet is replaced by mapping
+      CidrBlock: 
+        !Sub
+          - "${RegionSubnet}.1.0/24"
+          - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
       AvailabilityZone: 
         Fn::Select: 
           - 0
@@ -71,7 +132,11 @@ Resources:
     Type: AWS::EC2::Subnet
     Condition: Has2AvailabilityZones
     Properties:
-      CidrBlock: 10.0.2.0/24
+      # e.g. 10.101.2.0/24, where the second octet is replaced by mapping
+      CidrBlock: 
+        !Sub
+          - "${RegionSubnet}.2.0/24"
+          - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
       AvailabilityZone: 
         Fn::Select: 
           - 1
@@ -84,7 +149,11 @@ Resources:
     Type: AWS::EC2::Subnet
     Condition: Has3AvailabilityZones
     Properties:
-      CidrBlock: 10.0.3.0/24
+      # e.g. 10.101.3.0/24, where the second octet is replaced by mapping
+      CidrBlock: 
+        !Sub
+          - "${RegionSubnet}.3.0/24"
+          - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
       AvailabilityZone: 
         Fn::Select: 
           - 2
@@ -97,7 +166,11 @@ Resources:
     Type: AWS::EC2::Subnet
     Condition: Has4AvailabilityZones
     Properties:
-      CidrBlock: 10.0.4.0/24
+      # e.g. 10.101.4.0/24, where the second octet is replaced by mapping
+      CidrBlock: 
+        !Sub
+          - "${RegionSubnet}.4.0/24"
+          - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
       AvailabilityZone: 
         Fn::Select: 
           - 3
@@ -221,7 +294,11 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetFirst
           PrivateIpAddresses:
-            - PrivateIpAddress: "10.0.0.5"
+            # e.g. 10.101.0.5, where the second octet is replaced by mapping
+            - PrivateIpAddress: 
+                !Sub
+                  - "${RegionSubnet}.0.5"
+                  - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
               Primary: true
       Tags:
       - Key: Name
@@ -248,7 +325,11 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetFirstExtra
           PrivateIpAddresses:
-            - PrivateIpAddress: "10.0.1.5"
+            # e.g. 10.101.0.5, where the second octet is replaced by mapping
+            - PrivateIpAddress: 
+                !Sub
+                  - "${RegionSubnet}.1.5"
+                  - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
               Primary: true
       Tags:
       - Key: Name
@@ -276,7 +357,11 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetSecond
           PrivateIpAddresses:
-            - PrivateIpAddress: "10.0.2.5"
+            # e.g. 10.101.0.5, where the second octet is replaced by mapping
+            - PrivateIpAddress: 
+                !Sub
+                  - "${RegionSubnet}.2.5"
+                  - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
               Primary: true
       Tags:
       - Key: Name
@@ -304,7 +389,12 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetThird
           PrivateIpAddresses:
-            - PrivateIpAddress: "10.0.3.5"
+          PrivateIpAddresses:
+            # e.g. 10.101.0.5, where the second octet is replaced by mapping
+            - PrivateIpAddress: 
+                !Sub
+                  - "${RegionSubnet}.3.5"
+                  - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
               Primary: true
       Tags:
       - Key: Name
@@ -332,7 +422,11 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetFourth
           PrivateIpAddresses:
-            - PrivateIpAddress: "10.0.4.5"
+            # e.g. 10.101.0.5, where the second octet is replaced by mapping
+            - PrivateIpAddress: 
+                !Sub
+                  - "${RegionSubnet}.4.5"
+                  - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
               Primary: true
       Tags:
       - Key: Name
