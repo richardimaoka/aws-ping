@@ -1,5 +1,8 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Parameters:
+  AWSAccountIdForMainVPC: 
+    Description: The AWS Account Id for the 
+    Type: String
   SSHLocation:
     Description: The IP address range that can be used to SSH to the EC2 instances
     Type: String
@@ -7,11 +10,14 @@ Parameters:
     MaxLength: "18"
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
     ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
-    Default: 219.100.133.243/32
   EC2InstanceType: 
     Description: Instance type for iperf server and client
     Type: String
     Default: m5.xlarge  
+  MainStackName: 
+    Description: The name of the main Cloudformation stack
+    Type: String
+    Default: PingMainVPC
 
 Mappings:
   RegionMap:
@@ -64,8 +70,6 @@ Mappings:
       NumberOfAvailabilityZones: 3
       RegionSubnet: 10.116
 
-    
-
 Conditions:
   Has2AvailabilityZones:
     !Or
@@ -82,9 +86,13 @@ Conditions:
     !Or
       - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+  IsMainVPC:
+    !Equals [ !Ref "AWS::Region", ap-northeast-1 ]
+  IsSubVPC:
+    !Not [ !Equals [ !Ref "AWS::Region", ap-northeast-1 ] ] 
 
 Resources:
-  # Define VPC and Subnet
+  # Define VPC
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -96,6 +104,39 @@ Resources:
       Tags:
         - Key: Name
           Value: aws-ping-vpc-main
+
+  # Needed for VPC peering
+  PeerRole:
+    Type: 'AWS::IAM::Role'
+    Condition: IsMainVPC
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Principal:
+              AWS: !Ref AWSAccountIdForMainVPC
+            Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'ec2:AcceptVpcPeeringConnection'
+                Resource: '*'
+  VPCPeeringConnection:
+    Type: 'AWS::EC2::VPCPeeringConnection'
+    Condition: IsSubVPC
+    Properties:
+      VpcId: !Ref VPC
+      PeerVpcId:  {'Fn::ImportValue': !Sub '${MainStackName}-VPCId'}
+      PeerOwnerId: !Ref AWSAccountIdForMainVPC
+      PeerRoleArn: {'Fn::ImportValue': !Sub '${MainStackName}-RoleARN'}
+
+
+  # Define Subnet
   SubnetFirst:
     Type: AWS::EC2::Subnet
     Properties:
@@ -432,3 +473,15 @@ Resources:
       - Key: Name
         Value: aws-ping-ec2-subnet-4
 
+Outputs:
+  VPC:
+    Description: VPC
+    Value: !Ref VPC
+    Export:
+      Name: !Sub "${AWS::StackName}-VPCId"
+  RoleARN:
+    Export:
+      Name: !Sub "${AWS::StackName}-RoleARN"      
+    Value: !GetAtt 
+      - PeerRole
+      - Arn
