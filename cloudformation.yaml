@@ -26,6 +26,10 @@ Parameters:
     Description: Only needed for sub CloudFormation stacks. The region of the main stack. The main CloudFormation stack can leave this empty
     Type: String 
     Default: "" # The main CloudFormation stack can leave this empty
+  MainRegion:
+    Description: Your default region
+    Type: String 
+    Default: "ap-northeast-1"
   
 Mappings:
   RegionMap:
@@ -111,9 +115,9 @@ Conditions:
       - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
   IsMainVPC:
-    !Equals [ !Ref "AWS::Region", ap-northeast-1 ]
+    !Equals [ !Ref "AWS::Region", !Ref MainRegion ]
   IsSubVPC:
-    !Not [ !Equals [ !Ref "AWS::Region", ap-northeast-1 ] ] 
+    !Not [ !Equals [ !Ref "AWS::Region", !Ref MainRegion ] ] 
 
 Resources:
   # Define VPC
@@ -159,7 +163,6 @@ Resources:
       PeerVpcId: !Ref PeerVpcId
       PeerOwnerId: !Ref AWSAccountIdForMainVPC
       PeerRoleArn: !Ref PeerRoleArn
-
 
   # Define Subnet
   SubnetFirst:
@@ -274,12 +277,14 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
       RouteTableId: !Ref RouteTable      
-  # Add a route for ALL regions' VPC Peering - this is too wide open, but for experimental purpose, that's probably OK.
-  # Do this at your own risk!!
-  RouteInternetGateway:
+  RouteVPCPeering:
     Type: AWS::EC2::Route
+    Condition: IsSubVPC
     Properties: 
-      DestinationCidrBlock: 10.0.0.0/8
+      DestinationCidrBlock:
+        !Sub
+          - "${RegionSubnet}.4.0/24"
+          - { RegionSubnet: !FindInMap [RegionMap, Ref: MainRegion, RegionSubnet] }            
       GatewayId: !Ref VPCPeeringConnection
       RouteTableId: !Ref RouteTable      
   SubnetFirstRouteTableAssociation:
