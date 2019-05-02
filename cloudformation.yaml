@@ -284,8 +284,8 @@ Resources:
       DestinationCidrBlock:
         !Sub
           - "${RegionSubnet}.0.0/16"
-          - { RegionSubnet: !FindInMap [RegionMap, Ref: "MainRegion", RegionSubnet] }            
-      GatewayId: !Ref VPCPeeringConnection
+          - { RegionSubnet: !FindInMap [RegionMap, Ref: MainRegion, RegionSubnet] }            
+      VpcPeeringConnectionId: !Ref VPCPeeringConnection
       RouteTableId: !Ref RouteTable      
   SubnetFirstRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
