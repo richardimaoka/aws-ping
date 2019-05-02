@@ -409,10 +409,10 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetFirst
           PrivateIpAddresses:
-            # e.g. 10.101.0.3, where up to the second octed is replaced by mapping
+            # e.g. 10.101.0.6, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
-                  - "${RegionSubnet}.0.3"
+                  - "${RegionSubnet}.0.6"
                   - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
               Primary: true
       Tags:
@@ -436,7 +436,7 @@ Resources:
             # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
-                  - "${RegionSubnet}.0.5"
+                  - "${RegionSubnet}.0.4"
                   - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
               Primary: true
       Tags:
