@@ -346,8 +346,8 @@ Resources:
     Properties:
       GroupId: !Ref SecurityGroup
       IpProtocol: icmp
-      FromPort: 8
-      ToPort: 8
+      FromPort: -1
+      ToPort: -1
       CidrIp: !Ref SSHLocation
   # Accept ICMP requests from ALL regions' VPC Peering - this is too wide open, but for experimental purpose, that's probably OK.
   # Do this at your own risk!!
@@ -356,8 +356,8 @@ Resources:
     Properties:
       GroupId: !Ref SecurityGroup
       IpProtocol: icmp
-      FromPort: 8
-      ToPort: 8
+      FromPort: -1
+      ToPort: -1
       CidrIp: 10.0.0.0/8
 
   # EC2 instances

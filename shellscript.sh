@@ -2,7 +2,7 @@
 
 AWS_ACCOUNT_ID="$(aws sts get-caller-identity | jq -r '.Account')" \
 SSH_LOCATION="$(curl ifconfig.co 2> /dev/null)/32"
-STACK_NAME_VPC_MAIN="PingMainVPC"
+STACK_NAME="PingExperiment"
 
 STACK_EXISTS=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME_VPC_MAIN}")
 
@@ -25,7 +25,7 @@ DEFAULT_REGION=$(aws configure get region)
 echo "${DEFAULT_REGION}"
 echo "creating a sub CloudFormation stack"
 aws cloudformation create-stack \
-  --stack-name "substack" \
+  --stack-name "${STACK_NAME}" \
   --template-body file://cloudformation.yaml \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
