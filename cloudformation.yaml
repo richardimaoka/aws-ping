@@ -551,8 +551,23 @@ Outputs:
       Name: !Sub "${AWS::StackName}-VPCId"
   PeerRoleArn:
     Condition: IsMainVPC
-    Export:
-      Name: !Sub "${AWS::StackName}-PeerRoleArn"      
     Value: !GetAtt 
       - PeerRole
       - Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-PeerRoleArn"      
+  VPCPeeringConnection:
+    Condition: IsSubVPC
+    Value: !Ref VPCPeeringConnection
+    Export:
+      Name: !Sub "${AWS::StackName}-VPCPeeringConnection"      
+  VPCCidrBlock:
+    Value: !GetAtt 
+      - VPC
+      - CidrBlock
+    Export:
+      Name: !Sub "${AWS::StackName}-VPCCidrBlock"      
+  RouteTable:
+    Value: !Ref RouteTable
+    Export:
+      Name: !Sub "${AWS::StackName}-RouteTable"
