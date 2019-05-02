@@ -19,7 +19,6 @@ fi
 echo "Waiting until the Cloudformation VPC main stack is CREATE_COMPLETE"
 aws cloudformation wait stack-create-complete --stack-name "${STACK_NAME_VPC_MAIN}"
 
-aws cloudformation describe-stacks --stack-name "${STACK_NAME_VPC_MAIN}" 
 MAIN_VPC_ID=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME_VPC_MAIN}" --query "Stacks[].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)
 PEER_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME_VPC_MAIN}" --query "Stacks[].Outputs[?OutputKey=='PeerRoleARN'].OutputValue" --output text)
 
