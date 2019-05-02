@@ -274,6 +274,14 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
       RouteTableId: !Ref RouteTable      
+  # Add a route for ALL regions' VPC Peering - this is too wide open, but for experimental purpose, that's probably OK.
+  # Do this at your own risk!!
+  RouteInternetGateway:
+    Type: AWS::EC2::Route
+    Properties: 
+      DestinationCidrBlock: 10.0.0.0/8
+      GatewayId: !Ref VPCPeeringConnection
+      RouteTableId: !Ref RouteTable      
   SubnetFirstRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -336,6 +344,16 @@ Resources:
       FromPort: 8
       ToPort: 8
       CidrIp: !Ref SSHLocation
+  # Accept ICMP requests from ALL regions' VPC Peering - this is too wide open, but for experimental purpose, that's probably OK.
+  # Do this at your own risk!!
+  SecurityGropuIngressVPCPeeringICMP:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroup
+      IpProtocol: icmp
+      FromPort: 8
+      ToPort: 8
+      CidrIp: 10.0.0.0/8
 
   # EC2 instances
   EC2InstanceSubnetFirst:
