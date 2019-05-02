@@ -22,6 +22,10 @@ Parameters:
     Description: Only needed for sub CloudFormation stacks. The ARN of VPC Peering role. The main CloudFormation stack can leave this empty
     Type: String
     Default: "" # The main CloudFormation stack can leave this empty
+  PeerRegion:
+    Description: Only needed for sub CloudFormation stacks. The region of the main stack. The main CloudFormation stack can leave this empty
+    Type: String 
+    Default: "" # The main CloudFormation stack can leave this empty
   
 Mappings:
   RegionMap:
@@ -135,7 +139,8 @@ Resources:
     Condition: IsSubVPC
     Properties:
       VpcId: !Ref VPC
-      PeerVpcId:  !Ref PeerVpcId
+      PeerRegion: !Ref PeerRegion
+      PeerVpcId: !Ref PeerVpcId
       PeerOwnerId: !Ref AWSAccountIdForMainVPC
       PeerRoleArn: !Ref PeerRoleArn
 

@@ -20,8 +20,9 @@ echo "Waiting until the Cloudformation VPC main stack is CREATE_COMPLETE"
 aws cloudformation wait stack-create-complete --stack-name "${STACK_NAME_VPC_MAIN}"
 
 MAIN_VPC_ID=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME_VPC_MAIN}" --query "Stacks[].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)
-PEER_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME_VPC_MAIN}" --query "Stacks[].Outputs[?OutputKey=='PeerRoleARN'].OutputValue" --output text)
-
+PEER_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME_VPC_MAIN}" --query "Stacks[].Outputs[?OutputKey=='PeerRoleArn'].OutputValue" --output text)
+DEFAULT_REGION=$(aws configure get region)
+echo "${DEFAULT_REGION}"
 echo "creating a sub CloudFormation stack"
 aws cloudformation create-stack \
   --stack-name "substack" \
@@ -31,4 +32,5 @@ aws cloudformation create-stack \
                ParameterKey=AWSAccountIdForMainVPC,ParameterValue="${AWS_ACCOUNT_ID}" \
                ParameterKey=PeerVpcId,ParameterValue="${MAIN_VPC_ID}" \
                ParameterKey=PeerRoleArn,ParameterValue="${PEER_ROLE_ARN}" \
+               ParameterKey=PeerRegion,ParameterValue="${DEFAULT_REGION}" \
   --region "us-east-1"               
