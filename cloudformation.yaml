@@ -124,7 +124,7 @@ Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      # e.g. 10.101.0.0/16, where the second octet is replaced by mapping
+      # e.g. 10.101.0.0/16, where up to the second octed is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.0.0/16"
@@ -164,11 +164,35 @@ Resources:
       PeerOwnerId: !Ref AWSAccountIdForMainVPC
       PeerRoleArn: !Ref PeerRoleArn
 
+  # Resources for SSM
+  # https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-cf.html#automation-cf-create
+  RoleSSM:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ssm.amazonaws.com
+            - ec2.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+      Path: "/"
+  InstanceProfileSSM:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - !Ref RoleSSM
+  
   # Define Subnet
   SubnetFirst:
     Type: AWS::EC2::Subnet
     Properties:
-      # e.g. 10.101.0.0/24, where the second octet is replaced by mapping
+      # e.g. 10.101.0.0/24, where up to the second octed is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.0.0/24"
@@ -184,7 +208,7 @@ Resources:
   SubnetFirstExtra:
     Type: AWS::EC2::Subnet
     Properties:
-      # e.g. 10.101.1.0/24, where the second octet is replaced by mapping
+      # e.g. 10.101.1.0/24, where up to the second octed is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.1.0/24"
@@ -201,7 +225,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Condition: Has2AvailabilityZones
     Properties:
-      # e.g. 10.101.2.0/24, where the second octet is replaced by mapping
+      # e.g. 10.101.2.0/24, where up to the second octed is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.2.0/24"
@@ -218,7 +242,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Condition: Has3AvailabilityZones
     Properties:
-      # e.g. 10.101.3.0/24, where the second octet is replaced by mapping
+      # e.g. 10.101.3.0/24, where up to the second octed is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.3.0/24"
@@ -235,7 +259,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Condition: Has4AvailabilityZones
     Properties:
-      # e.g. 10.101.4.0/24, where the second octet is replaced by mapping
+      # e.g. 10.101.4.0/24, where up to the second octed is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.4.0/24"
@@ -361,6 +385,39 @@ Resources:
       CidrIp: 10.0.0.0/8
 
   # EC2 instances
+  EC2InstancePingOrigin:
+    Type: AWS::EC2::Instance
+    Properties: 
+      ImageId: !FindInMap [RegionMap, Ref: "AWS::Region", AmazonLinux2AMI]
+      InstanceType: !Ref EC2InstanceType
+      # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
+      KeyName: "demo-key-pair"
+      IamInstanceProfile: !Ref InstanceProfileSSM
+      # https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/
+      UserData:
+        Fn::Base64: |
+            #!/bin/bash
+            yum -y install git
+            cd /home/ec2-user
+            git clone https://github.com/richardimaoka/aws-ping
+            yum -y install jq
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref SecurityGroup
+          SubnetId: !Ref SubnetFirst
+          PrivateIpAddresses:
+            # e.g. 10.101.0.3, where up to the second octed is replaced by mapping
+            - PrivateIpAddress: 
+                !Sub
+                  - "${RegionSubnet}.0.3"
+                  - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
+              Primary: true
+      Tags:
+      - Key: Name
+        Value: aws-ping-ec2-subnet-1
   EC2InstanceSubnetFirst:
     Type: AWS::EC2::Instance
     Properties: 
@@ -369,13 +426,6 @@ Resources:
       # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
       # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
       KeyName: "demo-key-pair"
-      # https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/
-      UserData:
-        Fn::Base64: |
-            #!/bin/bash
-            yum -y install git
-            cd /home/ec2-user
-            git clone https://github.com/richardimaoka/aws-ping
       NetworkInterfaces: 
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
@@ -383,7 +433,7 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetFirst
           PrivateIpAddresses:
-            # e.g. 10.101.0.5, where the second octet is replaced by mapping
+            # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.0.5"
@@ -400,13 +450,6 @@ Resources:
       # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
       # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
       KeyName: "demo-key-pair"
-      # https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/
-      UserData:
-        Fn::Base64: |
-            #!/bin/bash
-            yum -y install git
-            cd /home/ec2-user
-            git clone https://github.com/richardimaoka/aws-ping
       NetworkInterfaces: 
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
@@ -414,7 +457,7 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetFirstExtra
           PrivateIpAddresses:
-            # e.g. 10.101.0.5, where the second octet is replaced by mapping
+            # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.1.5"
@@ -432,13 +475,6 @@ Resources:
       # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
       # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
       KeyName: "demo-key-pair"
-      # https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/
-      UserData:
-        Fn::Base64: |
-            #!/bin/bash
-            yum -y install git
-            cd /home/ec2-user
-            git clone https://github.com/richardimaoka/aws-ping
       NetworkInterfaces: 
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
@@ -446,7 +482,7 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetSecond
           PrivateIpAddresses:
-            # e.g. 10.101.0.5, where the second octet is replaced by mapping
+            # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.2.5"
@@ -464,13 +500,6 @@ Resources:
       # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
       # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
       KeyName: "demo-key-pair"
-      # https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/
-      UserData:
-        Fn::Base64: |
-            #!/bin/bash
-            yum -y install git
-            cd /home/ec2-user
-            git clone https://github.com/richardimaoka/aws-ping
       NetworkInterfaces: 
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
@@ -479,7 +508,7 @@ Resources:
           SubnetId: !Ref SubnetThird
           PrivateIpAddresses:
           PrivateIpAddresses:
-            # e.g. 10.101.0.5, where the second octet is replaced by mapping
+            # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.3.5"
@@ -497,13 +526,6 @@ Resources:
       # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
       # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
       KeyName: "demo-key-pair"
-      # https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/
-      UserData:
-        Fn::Base64: |
-            #!/bin/bash
-            yum -y install git
-            cd /home/ec2-user
-            git clone https://github.com/richardimaoka/aws-ping
       NetworkInterfaces: 
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
@@ -511,7 +533,7 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetFourth
           PrivateIpAddresses:
-            # e.g. 10.101.0.5, where the second octet is replaced by mapping
+            # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.4.5"
