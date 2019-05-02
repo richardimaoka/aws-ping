@@ -283,7 +283,7 @@ Resources:
     Properties: 
       DestinationCidrBlock:
         !Sub
-          - "${RegionSubnet}.4.0/24"
+          - "${RegionSubnet}.0.0/16"
           - { RegionSubnet: !FindInMap [RegionMap, Ref: MainRegion, RegionSubnet] }            
       GatewayId: !Ref VPCPeeringConnection
       RouteTableId: !Ref RouteTable      
