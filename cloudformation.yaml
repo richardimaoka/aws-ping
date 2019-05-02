@@ -18,7 +18,7 @@ Parameters:
     Description: Only needed for sub CloudFormation stacks. The VPC Id of the main stack. The main CloudFormation stack can leave this empty
     Type: String
     Default: "" # The main CloudFormation stack can leave this empty
-  PeerRoleARN:
+  PeerRoleArn:
     Description: Only needed for sub CloudFormation stacks. The ARN of VPC Peering role. The main CloudFormation stack can leave this empty
     Type: String
     Default: "" # The main CloudFormation stack can leave this empty
@@ -137,7 +137,7 @@ Resources:
       VpcId: !Ref VPC
       PeerVpcId:  !Ref PeerVpcId
       PeerOwnerId: !Ref AWSAccountIdForMainVPC
-      PeerRoleARN: !Ref PeerRoleARN
+      PeerRoleArn: !Ref PeerRoleArn
 
 
   # Define Subnet
@@ -483,9 +483,9 @@ Outputs:
     Value: !Ref VPC
     Export:
       Name: !Sub "${AWS::StackName}-VPCId"
-  PeerRoleARN:
+  PeerRoleArn:
     Export:
-      Name: !Sub "${AWS::StackName}-PeerRoleARN"      
+      Name: !Sub "${AWS::StackName}-PeerRoleArn"      
     Value: !GetAtt 
       - PeerRole
       - Arn
