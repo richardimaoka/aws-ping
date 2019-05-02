@@ -22,15 +22,19 @@ aws cloudformation wait stack-create-complete --stack-name "${STACK_NAME}"
 MAIN_VPC_ID=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --query "Stacks[].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)
 PEER_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --query "Stacks[].Outputs[?OutputKey=='PeerRoleArn'].OutputValue" --output text)
 DEFAULT_REGION=$(aws configure get region)
-echo "${DEFAULT_REGION}"
-echo "creating a sub CloudFormation stack"
-aws cloudformation create-stack \
-  --stack-name "${STACK_NAME}" \
-  --template-body file://cloudformation.yaml \
-  --capabilities CAPABILITY_NAMED_IAM \
-  --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
-               ParameterKey=AWSAccountIdForMainVPC,ParameterValue="${AWS_ACCOUNT_ID}" \
-               ParameterKey=PeerVpcId,ParameterValue="${MAIN_VPC_ID}" \
-               ParameterKey=PeerRoleArn,ParameterValue="${PEER_ROLE_ARN}" \
-               ParameterKey=PeerRegion,ParameterValue="${DEFAULT_REGION}" \
-  --region "us-east-1"               
+
+for region in $(aws ec2 describe-regions --query "Regions[].RegionName" | jq -r '.[]')
+do 
+  echo "Creating a CloudFormation stack=${STACK_NAME} for region=${region} if exists."
+  aws cloudformation create-stack \
+    --stack-name "${STACK_NAME}" \
+    --template-body file://cloudformation.yaml \
+    --capabilities CAPABILITY_NAMED_IAM \
+    --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
+                ParameterKey=AWSAccountIdForMainVPC,ParameterValue="${AWS_ACCOUNT_ID}" \
+                ParameterKey=PeerVpcId,ParameterValue="${MAIN_VPC_ID}" \
+                ParameterKey=PeerRoleArn,ParameterValue="${PEER_ROLE_ARN}" \
+                ParameterKey=PeerRegion,ParameterValue="${DEFAULT_REGION}" \
+    --region "${region}"
+done 
+
