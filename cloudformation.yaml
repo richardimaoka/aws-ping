@@ -1,8 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Parameters:
-  AWSAccountIdForMainVPC: 
-    Description: The AWS Account Id for the 
-    Type: String
   SSHLocation:
     Description: The IP address range that can be used to SSH to the EC2 instances
     Type: String
@@ -14,11 +11,18 @@ Parameters:
     Description: Instance type for iperf server and client
     Type: String
     Default: m5.xlarge  
-  MainStackName: 
-    Description: The name of the main Cloudformation stack
+  AWSAccountIdForMainVPC: 
+    Description: The AWS Account Id for the 
     Type: String
-    Default: PingMainVPC
-
+  PeerVpcId: 
+    Description: Only needed for sub CloudFormation stacks. The VPC Id of the main stack. The main CloudFormation stack can leave this empty
+    Type: String
+    Default: "" # The main CloudFormation stack can leave this empty
+  PeerRoleARN:
+    Description: Only needed for sub CloudFormation stacks. The ARN of VPC Peering role. The main CloudFormation stack can leave this empty
+    Type: String
+    Default: "" # The main CloudFormation stack can leave this empty
+  
 Mappings:
   RegionMap:
     eu-north-1:
@@ -131,9 +135,9 @@ Resources:
     Condition: IsSubVPC
     Properties:
       VpcId: !Ref VPC
-      PeerVpcId:  {'Fn::ImportValue': !Sub '${MainStackName}-VPCId'}
+      PeerVpcId:  !Ref PeerVpcId
       PeerOwnerId: !Ref AWSAccountIdForMainVPC
-      PeerRoleArn: {'Fn::ImportValue': !Sub '${MainStackName}-RoleARN'}
+      PeerRoleARN: !Ref PeerRoleARN
 
 
   # Define Subnet
@@ -474,14 +478,14 @@ Resources:
         Value: aws-ping-ec2-subnet-4
 
 Outputs:
-  VPC:
+  VPCId:
     Description: VPC
     Value: !Ref VPC
     Export:
       Name: !Sub "${AWS::StackName}-VPCId"
-  RoleARN:
+  PeerRoleARN:
     Export:
-      Name: !Sub "${AWS::StackName}-RoleARN"      
+      Name: !Sub "${AWS::StackName}-PeerRoleARN"      
     Value: !GetAtt 
       - PeerRole
       - Arn
