@@ -484,6 +484,7 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}-VPCId"
   PeerRoleArn:
+    Condition: IsMainVPC
     Export:
       Name: !Sub "${AWS::StackName}-PeerRoleArn"      
     Value: !GetAtt 

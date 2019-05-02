@@ -22,7 +22,6 @@ aws cloudformation wait stack-create-complete --stack-name "${STACK_NAME_VPC_MAI
 MAIN_VPC_ID=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME_VPC_MAIN}" --query "Stacks[].Outputs[?OutputKey=='VPCId'].OutputValue" --output text)
 PEER_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME_VPC_MAIN}" --query "Stacks[].Outputs[?OutputKey=='PeerRoleARN'].OutputValue" --output text)
 
-
 echo "creating a sub CloudFormation stack"
 aws cloudformation create-stack \
   --stack-name "substack" \
@@ -31,5 +30,5 @@ aws cloudformation create-stack \
   --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
                ParameterKey=AWSAccountIdForMainVPC,ParameterValue="${AWS_ACCOUNT_ID}" \
                ParameterKey=PeerVpcId,ParameterValue="${MAIN_VPC_ID}" \
-               ParameterKey=PeerRoleARN,ParameterValue="${PEER_ROLE_ARN}" \
+               ParameterKey=PeerRoleArn,ParameterValue="${PEER_ROLE_ARN}" \
   --region "us-east-1"               
