@@ -30,7 +30,8 @@ Parameters:
     Description: Your default region
     Type: String 
     Default: "ap-northeast-1"
-  
+
+# aws ec2 describe-regions --query "Regions[].RegionName" | jq -r '.[]' | xargs -i aws ec2 describe-availability-zones --query "AvailabilityZones[].ZoneName" --region {}
 Mappings:
   RegionMap:
     eu-north-1:
@@ -38,7 +39,7 @@ Mappings:
       RegionSubnet: 10.101
       AmazonLinux2AMI: ami-d16fe6af
     ap-south-1:
-      NumberOfAvailabilityZones: 3
+      NumberOfAvailabilityZones: 2
       RegionSubnet: 10.102
       AmazonLinux2AMI: ami-0889b8a448de4fc44
     eu-west-3:
@@ -54,7 +55,7 @@ Mappings:
       RegionSubnet: 10.105
       AmazonLinux2AMI: ami-07683a44e80cd32c5
     ap-northeast-2:
-      NumberOfAvailabilityZones: 3
+      NumberOfAvailabilityZones: 2
       RegionSubnet: 10.106
       AmazonLinux2AMI: ami-047f7b46bd6dd5d84
     ap-northeast-1:
@@ -62,11 +63,11 @@ Mappings:
       RegionSubnet: 10.107
       AmazonLinux2AMI: ami-0f9ae750e8274075b
     sa-east-1:
-      NumberOfAvailabilityZones: 3
+      NumberOfAvailabilityZones: 2
       RegionSubnet: 10.108
       AmazonLinux2AMI: ami-0669a96e355eac82f
     ca-central-1:
-      NumberOfAvailabilityZones: 3
+      NumberOfAvailabilityZones: 2
       RegionSubnet: 10.109
       AmazonLinux2AMI: ami-03338e1f67dae0168
     ap-southeast-1:
@@ -82,7 +83,7 @@ Mappings:
       RegionSubnet: 10.112
       AmazonLinux2AMI: ami-09def150731bdbcc2
     us-east-1:
-      NumberOfAvailabilityZones: 3
+      NumberOfAvailabilityZones: 4
       RegionSubnet: 10.113
       AmazonLinux2AMI: ami-0de53d8956e8dcf80
     us-east-2:
@@ -90,11 +91,11 @@ Mappings:
       RegionSubnet: 10.114
       AmazonLinux2AMI: ami-02bcbb802e03574ba
     us-west-1:
-      NumberOfAvailabilityZones: 3
+      NumberOfAvailabilityZones: 2
       RegionSubnet: 10.115
       AmazonLinux2AMI: ami-0019ef04ac50be30f
     us-west-2:
-      NumberOfAvailabilityZones: 3
+      NumberOfAvailabilityZones: 4
       RegionSubnet: 10.116
       AmazonLinux2AMI: ami-061392db613a6357b
 
@@ -387,6 +388,7 @@ Resources:
   # EC2 instances
   EC2InstancePingOrigin:
     Type: AWS::EC2::Instance
+    Condition: IsMainVPC
     Properties: 
       ImageId: !FindInMap [RegionMap, Ref: "AWS::Region", AmazonLinux2AMI]
       InstanceType: !Ref EC2InstanceType
