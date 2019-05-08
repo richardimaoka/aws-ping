@@ -2,8 +2,9 @@
 
 STACK_NAME="PingExperiment"
 LOCAL_IPV4=$(curl http://169.254.169.254/latest/meta-data/local-ipv4 2> /dev/null)
+DEFAULT_REGION=$(aws configure get region)
 
-for region in $(aws ec2 describe-regions --query "Regions[].RegionName" | jq -r '.[]')
+for region in $(aws ec2 describe-regions --query "Regions[].RegionName" --region "${DEFAULT_REGION}"| jq -r '.[]')
 do
   echo "------------------------------------------------------------"
   echo "Ping experiment for ${region}"
