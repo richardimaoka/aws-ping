@@ -1,11 +1,10 @@
 
 echo "Running a remote command to start the iperf server on ${IPERF_SERVER_INSTANCE_ID}"
 
-PING_ORIGIN_EC2=$(aws ec2 aws ec2 describe-instances  \
- --filters "Name=tag:aws:cloudformation:stack-name,Values=PingExperiment" \
+PING_ORIGIN_EC2=$(aws ec2 describe-instances  \
+ --filters "Name=tag:aws:cloudformation:stack-name,Values=PingExperiment" "Name=tag:aws:cloudformation:logical-id,Values=EC2InstancePingOrigin"\
  --query "Reservations[].Instances[].InstanceId" \
- --text
-)
+ --output text)
 
 aws ssm send-command \
   --instance-ids "${PING_ORIGIN_EC2}" \
