@@ -26,7 +26,6 @@ MAIN_ROUTE_TABLE=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME
 for region in $(aws ec2 describe-regions --query "Regions[].RegionName" | jq -r '.[]')
 do 
   if [ "${region}" != "${DEFAULT_REGION}" ]; then
-    
     if ! aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --region "${region}" 2> /dev/null; then
       echo "Creating a CloudFormation stack=${STACK_NAME} for region=${region}"
       aws cloudformation create-stack \
@@ -41,7 +40,12 @@ do
         --region "${region}" \
         --output text
     fi
+  fi
+done 
 
+for region in $(aws ec2 describe-regions --query "Regions[].RegionName" | jq -r '.[]')
+do 
+  if [ "${region}" != "${DEFAULT_REGION}" ]; then
     echo "Waiting until the Cloudformation stack is CREATE_COMPLETE for ${region}"
     if aws cloudformation wait stack-create-complete --stack-name "${STACK_NAME}" --region "${region}"; then
       # Doing this in the shell script, because doing the same in CloudFormation is pretty
@@ -58,7 +62,4 @@ do
       echo "ERROR: Could not add VPC peering to the route table of the main VPC"
     fi
   fi
-
-
 done 
-
