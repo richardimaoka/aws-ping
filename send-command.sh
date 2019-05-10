@@ -1,7 +1,9 @@
 DEFAULT_REGION=$(aws configure get region)
 
 PING_ORIGIN_EC2=$(aws ec2 describe-instances  \
- --filters "Name=tag:aws:cloudformation:stack-name,Values=PingExperiment" "Name=tag:aws:cloudformation:logical-id,Values=EC2InstancePingOrigin"\
+ --filters "Name=tag:aws:cloudformation:stack-name,Values=PingExperiment" \
+           "Name=tag:aws:cloudformation:logical-id,Values=EC2InstancePingOrigin" \
+           "Name=instance-state-name,Values=running" \
  --query "Reservations[].Instances[].InstanceId" \
  --output text)
 
