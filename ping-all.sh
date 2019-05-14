@@ -31,13 +31,17 @@ done
 
 if [ -n "${CURRENT_REGION}" ]; then
 
-  echo "The results are saved in s3:..."
+  UUID=$(uuidgen) 
+  FILE_NAME="${UUID}.log"
+  echo "The results are saved in s3."
+  echo "s3://${S3_BUCKET_NAME}/${FILE_NAME}" | tee tmp/"${FILE_NAME}"
+  echo "https://s3.console.aws.amazon.com/s3/buckets/${S3_BUCKET_NAME}/${FILE_NAME}" | tee -a tmp/"${FILE_NAME}"
 
   for region in $(aws ec2 describe-regions --query "Regions[].RegionName" --region "${CURRENT_REGION}" | jq -r '.[]')
   do
-    echo "------------------------------------------------------------"
-    echo "Ping experiment for ${region}"
-    echo "------------------------------------------------------------"
+    echo "------------------------------------------------------------" >> tmp/"${FILE_NAME}"
+    echo "Ping experiment for ${region}" >> tmp/"${FILE_NAME}"
+    echo "------------------------------------------------------------" >> tmp/"${FILE_NAME}"
 
     EC2_INSTANCES=$(aws ec2 describe-instances \
       --filters "Name=tag:aws:cloudformation:stack-name,Values=${STACK_NAME}" \
@@ -52,22 +56,20 @@ if [ -n "${CURRENT_REGION}" ]; then
       TAG=
 
       if [ -n "${AVAILABILITY_ZONE}" ] && [ -n "${TARGET_IP_ADDRESS}" ]; then
-        echo "traceroute ${LOCAL_IPV4}"
-        traceroute "${LOCAL_IPV4}"
-        echo "Pinging an instance in ${AVAILABILITY_ZONE} from ${LOCAL_IPV4}"
-        ping -c 30 "${TARGET_IP_ADDRESS}"
-        echo "------------------------------------------------------------"
+        echo "traceroute ${LOCAL_IPV4}" >> tmp/"${FILE_NAME}"
+        traceroute "${LOCAL_IPV4}" >> tmp/"${FILE_NAME}"
+        echo "Pinging an instance in ${AVAILABILITY_ZONE} from ${LOCAL_IPV4}" >> tmp/"${FILE_NAME}"
+        ping -c 30 "${TARGET_IP_ADDRESS}" >> tmp/"${FILE_NAME}"
+        echo "------------------------------------------------------------" >> tmp/"${FILE_NAME}"
       fi
     done
   done
-
-  echo "traceroute ${LOCAL_IPV4}"
     
   aws s3 cp \
-    "aggregated/${TEST_EXECUTION_UUID}.log" \
-    "s3://${BUCKET_NAME}/aggregated/"
-  
+    tmp/"${FILE_NAME}" \
+    "s3://${BUCKET_NAME}/${FILE_NAME}"  
+
 else
-  echo "--region option must be passed but was empty"
+  echo "--region option must be passed but was empty" | tee -a tmp/"${FILE_NAME}"
 fi
 
