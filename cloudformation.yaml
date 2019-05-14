@@ -191,7 +191,7 @@ Resources:
       - !Ref RoleSSM
   
   # Define Subnet
-  SubnetFirst:
+  SubnetInAZ1:
     Type: AWS::EC2::Subnet
     Properties:
       # e.g. 10.101.0.0/24, where up to the second octed is replaced by mapping
@@ -206,8 +206,8 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: aws-ping-subnet-1
-  SubnetFirstExtra:
+          Value: aws-ping-subnet-az-1
+  SubnetExtraInAZ1:
     Type: AWS::EC2::Subnet
     Properties:
       # e.g. 10.101.1.0/24, where up to the second octed is replaced by mapping
@@ -222,8 +222,8 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: aws-ping-subnet-1-extra
-  SubnetSecond:
+          Value: aws-ping-subnet-extra-az-1
+  SubnetInAZ2:
     Type: AWS::EC2::Subnet
     Condition: Has2AvailabilityZones
     Properties:
@@ -239,8 +239,8 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: aws-ping-subnet-2
-  SubnetThird:
+          Value: aws-ping-subnet-az-2
+  SubnetInAZ3:
     Type: AWS::EC2::Subnet
     Condition: Has3AvailabilityZones
     Properties:
@@ -256,8 +256,8 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: aws-ping-subnet-3
-  SubnetFourth:
+          Value: aws-ping-subnet-az-3
+  SubnetInAZ4:
     Type: AWS::EC2::Subnet
     Condition: Has4AvailabilityZones
     Properties:
@@ -273,7 +273,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: aws-ping-subnet-4
+          Value: aws-ping-subnet-az-4
 
   # Define Internet Gateway and the attachment to VPC          
   InternetGateway:
@@ -313,34 +313,34 @@ Resources:
           - { RegionSubnet: !FindInMap [RegionMap, Ref: MainRegion, RegionSubnet] }            
       VpcPeeringConnectionId: !Ref VPCPeeringConnection
       RouteTableId: !Ref RouteTable      
-  SubnetFirstRouteTableAssociation:
+  SubnetInAZ1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetFirst
-  SubnetFirstExtraRouteTableAssociation:
+      SubnetId: !Ref SubnetInAZ1
+  SubnetExtraInAZ1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetFirstExtra
-  SubnetSecondRouteTableAssociation:
+      SubnetId: !Ref SubnetExtraInAZ1
+  SubnetInAz2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Condition: Has2AvailabilityZones
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetSecond
-  SubnetThirdRouteTableAssociation:
+      SubnetId: !Ref SubnetInAZ2
+  SubnetInAz3RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Condition: Has3AvailabilityZones
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetThird
-  SubnetFourthRouteTableAssociation:
+      SubnetId: !Ref SubnetInAZ3
+  SubnetInAz4RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Condition: Has4AvailabilityZones
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetFourth
+      SubnetId: !Ref SubnetInAZ4
 
   # Define Security Group and its inbound rules (= ingress).
   # The outbound (egress) rules are automatically set as "Allow All".
@@ -410,7 +410,7 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - !Ref SecurityGroup
-          SubnetId: !Ref SubnetFirst
+          SubnetId: !Ref SubnetInAZ1
           PrivateIpAddresses:
             # e.g. 10.101.0.6, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
@@ -420,8 +420,8 @@ Resources:
               Primary: true
       Tags:
       - Key: Name
-        Value: aws-ping-ec2-subnet-1
-  EC2InstanceSubnetFirst:
+        Value: aws-ping-ec2-subnet-az-1-origin
+  EC2InstanceSubnetInAZ1:
     Type: AWS::EC2::Instance
     Properties: 
       ImageId: !FindInMap [RegionMap, Ref: "AWS::Region", AmazonLinux2AMI]
@@ -434,7 +434,7 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - !Ref SecurityGroup
-          SubnetId: !Ref SubnetFirst
+          SubnetId: !Ref SubnetInAZ1
           PrivateIpAddresses:
             # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
@@ -444,8 +444,8 @@ Resources:
               Primary: true
       Tags:
       - Key: Name
-        Value: aws-ping-ec2-subnet-1
-  EC2InstanceSubnetFirstExtra:
+        Value: aws-ping-ec2-subnet-az-1
+  EC2InstanceSubnetExtraInAZ1:
     Type: AWS::EC2::Instance
     Properties: 
       ImageId: !FindInMap [RegionMap, Ref: "AWS::Region", AmazonLinux2AMI]
@@ -458,7 +458,7 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - !Ref SecurityGroup
-          SubnetId: !Ref SubnetFirstExtra
+          SubnetId: !Ref SubnetExtraInAZ1
           PrivateIpAddresses:
             # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
@@ -468,8 +468,8 @@ Resources:
               Primary: true
       Tags:
       - Key: Name
-        Value: aws-ping-ec2-subnet-1-extra
-  EC2InstanceSubnetSecond:
+        Value: aws-ping-ec2-subnet-extra-az-1
+  EC2InstanceSubnetInAz2:
     Type: AWS::EC2::Instance
     Condition: Has2AvailabilityZones
     Properties: 
@@ -483,7 +483,7 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - !Ref SecurityGroup
-          SubnetId: !Ref SubnetSecond
+          SubnetId: !Ref SubnetInAZ2
           PrivateIpAddresses:
             # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
@@ -493,8 +493,8 @@ Resources:
               Primary: true
       Tags:
       - Key: Name
-        Value: aws-ping-ec2-subnet-2
-  EC2InstanceSubnetThird:
+        Value: aws-ping-ec2-subnet-az-2
+  EC2InstanceSubnetInAz3:
     Type: AWS::EC2::Instance
     Condition: Has3AvailabilityZones
     Properties: 
@@ -508,7 +508,7 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - !Ref SecurityGroup
-          SubnetId: !Ref SubnetThird
+          SubnetId: !Ref SubnetInAZ3
           PrivateIpAddresses:
           PrivateIpAddresses:
             # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
@@ -519,8 +519,8 @@ Resources:
               Primary: true
       Tags:
       - Key: Name
-        Value: aws-ping-ec2-subnet-3
-  EC2InstanceSubnetFourth:
+        Value: aws-ping-ec2-subnet-az-3
+  EC2InstanceSubnetInAz4:
     Type: AWS::EC2::Instance
     Condition: Has4AvailabilityZones
     Properties: 
@@ -534,7 +534,7 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - !Ref SecurityGroup
-          SubnetId: !Ref SubnetFourth
+          SubnetId: !Ref SubnetInAZ4
           PrivateIpAddresses:
             # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
             - PrivateIpAddress: 
@@ -544,7 +544,7 @@ Resources:
               Primary: true
       Tags:
       - Key: Name
-        Value: aws-ping-ec2-subnet-4
+        Value: aws-ping-ec2-subnet-az-4
 
 Outputs:
   VPCId:

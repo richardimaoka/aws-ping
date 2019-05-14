@@ -1,4 +1,18 @@
 DEFAULT_REGION=$(aws configure get region)
+S3_BUCKET_NAME="samplebucket-richardimaoka-sample-sample"
+
+for OPT in "$@"
+do
+    case "$OPT" in
+      '--s3-bucket' )
+        if [ -z "$2" ]; then
+            echo "option --s3-bucket requires an argument -- $1" 1>&2
+            exit 1
+        fi
+        S3_BUCKET_NAME="$2"
+        ;;
+    esac
+done
 
 PING_ORIGIN_EC2=$(aws ec2 describe-instances  \
  --filters "Name=tag:aws:cloudformation:stack-name,Values=PingExperiment" \
