@@ -2,11 +2,22 @@
 
 # parse options
 MULTI_REGION="true"
+EC2_INSTANCE_TYPE="m5.xlarge"
 for OPT in "$@"
 do
     case "$OPT" in
-        '--single-region' )
-          MULTI_REGION="false"
+      '--single-region' )
+        MULTI_REGION="false"
+        shift 1
+        ;;
+      '--instance-type' )
+        if [ -z "$2" ]; then
+          echo "option --instance-type requires an argument -- $1" 1>&2
+          exit 1
+        fi
+        EC2_INSTANCE_TYPE="$2"
+        shift 2
+        ;;
     esac
 done
 
@@ -23,6 +34,7 @@ if ! aws cloudformation describe-stacks --stack-name "${STACK_NAME}" 2>/dev/null
     --capabilities CAPABILITY_NAMED_IAM \
     --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
                  ParameterKey=AWSAccountIdForMainVPC,ParameterValue="${AWS_ACCOUNT_ID}" \
+                 ParameterKey=EC2InstanceType,ParameterValue="${EC2_INSTANCE_TYPE}" \
     --output text
 fi
 

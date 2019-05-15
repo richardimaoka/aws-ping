@@ -27,6 +27,6 @@ aws ssm send-command \
   --instance-ids "${PING_ORIGIN_EC2}" \
   --document-name "AWS-RunShellScript" \
   --comment "aws-ping command to run ping to all relevant EC2 instances in all the regions" \
-  --parameters commands=["/home/ec2-user/aws-ping/ping-all.sh --region ${DEFAULT_REGION}"] \
+  --parameters commands=["/home/ec2-user/aws-ping/ping-all.sh --region ${DEFAULT_REGION} --s3-bucket ${S3_BUCKET_NAME}"] \
   --output text \
   --query "Command.CommandIad"

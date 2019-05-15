@@ -59,10 +59,10 @@ if [ -n "${CURRENT_REGION}" ]; then
       )
       if [ -n "${AVAILABILITY_ZONE}" ] && [ -n "${TARGET_IP_ADDRESS}" ]; then
         echo "${TAG}" >> /tmp/"${FILE_NAME}"
-        echo ""
+        echo "" >> /tmp/"${FILE_NAME}"
         echo "traceroute ${LOCAL_IPV4}" >> /tmp/"${FILE_NAME}"
         traceroute "${LOCAL_IPV4}" >> /tmp/"${FILE_NAME}"
-        echo ""
+        echo "" >> /tmp/"${FILE_NAME}"
         echo "Pinging an instance in ${AVAILABILITY_ZONE} from ${LOCAL_IPV4}" >> /tmp/"${FILE_NAME}"
         ping -c 30 "${TARGET_IP_ADDRESS}" >> /tmp/"${FILE_NAME}"
         echo "------------------------------------------------------------" >> /tmp/"${FILE_NAME}"

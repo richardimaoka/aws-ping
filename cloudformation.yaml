@@ -10,7 +10,6 @@ Parameters:
   EC2InstanceType: 
     Description: Instance type for iperf server and client
     Type: String
-    Default: m5.xlarge  
   AWSAccountIdForMainVPC: 
     Description: The AWS Account Id for the 
     Type: String
