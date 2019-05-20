@@ -106,24 +106,29 @@ Conditions:
       - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 6, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 7, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
   Has3AvailabilityZones:
     !Or
       - !Equals [ 3, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 6, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 7, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
   Has4AvailabilityZones:
     !Or
       - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 6, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 7, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
   Has5AvailabilityZones:
     !Or
       - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 6, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 7, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
   Has6AvailabilityZones:
     !Or
       - !Equals [ 6, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 7, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
   IsMainVPC:
     !Equals [ !Ref "AWS::Region", !Ref MainRegion ]
   IsSubVPC:
