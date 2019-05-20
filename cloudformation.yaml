@@ -391,13 +391,13 @@ Resources:
       SubnetId: !Ref SubnetInAZ4
   SubnetInAz5RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
-    Condition: Has4AvailabilityZones
+    Condition: Has5AvailabilityZones
     Properties:
       RouteTableId: !Ref RouteTable
       SubnetId: !Ref SubnetInAZ5
   SubnetInAz6RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
-    Condition: Has4AvailabilityZones
+    Condition: Has6AvailabilityZones
     Properties:
       RouteTableId: !Ref RouteTable
       SubnetId: !Ref SubnetInAZ6
