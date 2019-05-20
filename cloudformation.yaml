@@ -38,7 +38,7 @@ Mappings:
       RegionSubnet: 10.101
       AmazonLinux2AMI: ami-d16fe6af
     ap-south-1:
-      NumberOfAvailabilityZones: 2
+      NumberOfAvailabilityZones: 3
       RegionSubnet: 10.102
       AmazonLinux2AMI: ami-0889b8a448de4fc44
     eu-west-3:
@@ -82,7 +82,7 @@ Mappings:
       RegionSubnet: 10.112
       AmazonLinux2AMI: ami-09def150731bdbcc2
     us-east-1:
-      NumberOfAvailabilityZones: 4
+      NumberOfAvailabilityZones: 6
       RegionSubnet: 10.113
       AmazonLinux2AMI: ami-0de53d8956e8dcf80
     us-east-2:
@@ -105,15 +105,25 @@ Conditions:
       - !Equals [ 3, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 6, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
   Has3AvailabilityZones:
     !Or
       - !Equals [ 3, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 6, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
   Has4AvailabilityZones:
     !Or
       - !Equals [ 4, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
       - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 6, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+  Has5AvailabilityZones:
+    !Or
+      - !Equals [ 5, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+      - !Equals [ 6, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
+  Has6AvailabilityZones:
+    !Or
+      - !Equals [ 6, !FindInMap [RegionMap, Ref: "AWS::Region", NumberOfAvailabilityZones] ]
   IsMainVPC:
     !Equals [ !Ref "AWS::Region", !Ref MainRegion ]
   IsSubVPC:
@@ -124,7 +134,7 @@ Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      # e.g. 10.101.0.0/16, where up to the second octed is replaced by mapping
+      # e.g. 10.101.0.0/16, where up to the second octet is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.0.0/16"
@@ -193,7 +203,7 @@ Resources:
   SubnetInAZ1:
     Type: AWS::EC2::Subnet
     Properties:
-      # e.g. 10.101.0.0/24, where up to the second octed is replaced by mapping
+      # e.g. 10.101.0.0/24, where up to the second octet is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.0.0/24"
@@ -209,7 +219,7 @@ Resources:
   SubnetExtraInAZ1:
     Type: AWS::EC2::Subnet
     Properties:
-      # e.g. 10.101.1.0/24, where up to the second octed is replaced by mapping
+      # e.g. 10.101.1.0/24, where up to the second octet is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.1.0/24"
@@ -226,7 +236,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Condition: Has2AvailabilityZones
     Properties:
-      # e.g. 10.101.2.0/24, where up to the second octed is replaced by mapping
+      # e.g. 10.101.2.0/24, where up to the second octet is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.2.0/24"
@@ -243,7 +253,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Condition: Has3AvailabilityZones
     Properties:
-      # e.g. 10.101.3.0/24, where up to the second octed is replaced by mapping
+      # e.g. 10.101.3.0/24, where up to the second octet is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.3.0/24"
@@ -260,7 +270,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Condition: Has4AvailabilityZones
     Properties:
-      # e.g. 10.101.4.0/24, where up to the second octed is replaced by mapping
+      # e.g. 10.101.4.0/24, where up to the second octet is replaced by mapping
       CidrBlock: 
         !Sub
           - "${RegionSubnet}.4.0/24"
@@ -273,6 +283,40 @@ Resources:
       Tags:
         - Key: Name
           Value: aws-ping-subnet-az-4
+  SubnetInAZ5:
+    Type: AWS::EC2::Subnet
+    Condition: Has5AvailabilityZones
+    Properties:
+      # e.g. 10.101.5.0/24, where up to the second octet is replaced by mapping
+      CidrBlock: 
+        !Sub
+          - "${RegionSubnet}.5.0/24"
+          - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
+      AvailabilityZone: 
+        Fn::Select: 
+          - 3
+          - !GetAZs {Ref: "AWS::Region"}
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: aws-ping-subnet-az-5
+  SubnetInAZ6:
+    Type: AWS::EC2::Subnet
+    Condition: Has6AvailabilityZones
+    Properties:
+      # e.g. 10.101.6.0/24, where up to the second octet is replaced by mapping
+      CidrBlock: 
+        !Sub
+          - "${RegionSubnet}.6.0/24"
+          - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
+      AvailabilityZone: 
+        Fn::Select: 
+          - 3
+          - !GetAZs {Ref: "AWS::Region"}
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: aws-ping-subnet-az-6
 
   # Define Internet Gateway and the attachment to VPC          
   InternetGateway:
@@ -340,6 +384,19 @@ Resources:
     Properties:
       RouteTableId: !Ref RouteTable
       SubnetId: !Ref SubnetInAZ4
+  SubnetInAz5RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Has4AvailabilityZones
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref SubnetInAZ5
+  SubnetInAz6RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Has4AvailabilityZones
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref SubnetInAZ6
+
 
   # Define Security Group and its inbound rules (= ingress).
   # The outbound (egress) rules are automatically set as "Allow All".
@@ -411,7 +468,7 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetInAZ1
           PrivateIpAddresses:
-            # e.g. 10.101.0.6, where up to the second octed is replaced by mapping
+            # e.g. 10.101.0.6, where up to the second octet is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.0.6"
@@ -435,7 +492,7 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetInAZ1
           PrivateIpAddresses:
-            # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
+            # e.g. 10.101.0.5, where up to the second octet is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.0.4"
@@ -459,7 +516,7 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetExtraInAZ1
           PrivateIpAddresses:
-            # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
+            # e.g. 10.101.0.5, where up to the second octet is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.1.5"
@@ -484,7 +541,7 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetInAZ2
           PrivateIpAddresses:
-            # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
+            # e.g. 10.101.0.5, where up to the second octet is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.2.5"
@@ -510,7 +567,7 @@ Resources:
           SubnetId: !Ref SubnetInAZ3
           PrivateIpAddresses:
           PrivateIpAddresses:
-            # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
+            # e.g. 10.101.0.5, where up to the second octet is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.3.5"
@@ -535,7 +592,7 @@ Resources:
             - !Ref SecurityGroup
           SubnetId: !Ref SubnetInAZ4
           PrivateIpAddresses:
-            # e.g. 10.101.0.5, where up to the second octed is replaced by mapping
+            # e.g. 10.101.0.5, where up to the second octet is replaced by mapping
             - PrivateIpAddress: 
                 !Sub
                   - "${RegionSubnet}.4.5"
@@ -544,7 +601,57 @@ Resources:
       Tags:
       - Key: Name
         Value: aws-ping-ec2-subnet-az-4
-
+  EC2InstanceSubnetInAz5:
+    Type: AWS::EC2::Instance
+    Condition: Has5AvailabilityZones
+    Properties: 
+      ImageId: !FindInMap [RegionMap, Ref: "AWS::Region", AmazonLinux2AMI]
+      InstanceType: !Ref EC2InstanceType
+      # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
+      KeyName: "demo-key-pair"
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref SecurityGroup
+          SubnetId: !Ref SubnetInAZ5
+          PrivateIpAddresses:
+            # e.g. 10.101.0.5, where up to the second octet is replaced by mapping
+            - PrivateIpAddress: 
+                !Sub
+                  - "${RegionSubnet}.5.5"
+                  - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
+              Primary: true
+      Tags:
+      - Key: Name
+        Value: aws-ping-ec2-subnet-az-5
+  EC2InstanceSubnetInAz6:
+    Type: AWS::EC2::Instance
+    Condition: Has6AvailabilityZones
+    Properties: 
+      ImageId: !FindInMap [RegionMap, Ref: "AWS::Region", AmazonLinux2AMI]
+      InstanceType: !Ref EC2InstanceType
+      # You should create an EC2 key pair in advance, as there is no key-pair resource in CloudFormation
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-keypair.html
+      KeyName: "demo-key-pair"
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref SecurityGroup
+          SubnetId: !Ref SubnetInAZ6
+          PrivateIpAddresses:
+            # e.g. 10.101.0.5, where up to the second octet is replaced by mapping
+            - PrivateIpAddress: 
+                !Sub
+                  - "${RegionSubnet}.6.5"
+                  - { RegionSubnet: !FindInMap [RegionMap, Ref: "AWS::Region", RegionSubnet] }            
+              Primary: true
+      Tags:
+      - Key: Name
+        Value: aws-ping-ec2-subnet-az-6
+    
 Outputs:
   VPCId:
     Description: VPC
