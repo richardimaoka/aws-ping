@@ -56,10 +56,11 @@ if [ "${MULTI_REGION}" = "true" ]; then
           --template-body file://cloudformation.yaml \
           --capabilities CAPABILITY_NAMED_IAM \
           --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
-                      ParameterKey=AWSAccountIdForMainVPC,ParameterValue="${AWS_ACCOUNT_ID}" \
-                      ParameterKey=PeerVpcId,ParameterValue="${MAIN_VPC_ID}" \
-                      ParameterKey=PeerRoleArn,ParameterValue="${PEER_ROLE_ARN}" \
-                      ParameterKey=PeerRegion,ParameterValue="${DEFAULT_REGION}" \
+                       ParameterKey=AWSAccountIdForMainVPC,ParameterValue="${AWS_ACCOUNT_ID}" \
+                       ParameterKey=PeerVpcId,ParameterValue="${MAIN_VPC_ID}" \
+                       ParameterKey=PeerRoleArn,ParameterValue="${PEER_ROLE_ARN}" \
+                       ParameterKey=PeerRegion,ParameterValue="${DEFAULT_REGION}" \
+                       ParameterKey=EC2InstanceType,ParameterValue="${EC2_INSTANCE_TYPE}" \
           --region "${region}" \
           --output text
       fi
