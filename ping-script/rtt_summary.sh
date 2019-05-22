@@ -16,7 +16,7 @@ if [ -z "${SUMMARY_LINE}" ]; then
   exit 1
 elif [ "$(echo "${SUMMARY_LINE}" | wc -l )" -ne 1 ]; then
   >&2 echo 'ERROR: Multiple summary lines found, which are like "30 packets transmitted, 30 received, 0% packet loss, time 29034ms" is not found.'
-  >&2 echo "${RTT_LINE}"
+  >&2 echo "${SUMMARY_LINE}"
   exit 1
 else
   # Parse the line (e.g.) "30 packets transmitted, 30 received, 0% packet loss, time 29034ms"
