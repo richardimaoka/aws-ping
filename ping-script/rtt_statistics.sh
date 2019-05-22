@@ -1,23 +1,23 @@
 #!/bin/sh
 
 # ----------------------------------------------------------------------------------------
-# You pass the ping output as input stream, and this produecs JSON of the ping statistics.
+# You pass a single ping RTT statistics line as input stream, and this produecs JSON of it
 # ----------------------------------------------------------------------------------------
 
-
-# ping summary lines are like below. Extracting the line starting with "rtt min/...", 
-#
-# --- 10.116.4.5 ping statistics ---
-# 30 packets transmitted, 30 received, 0% packet loss, time 29034ms ## <- this is the statistics line
-# rtt min/avg/max/mdev = 97.749/98.197/98.285/0.380 ms
-RTT_LINE=$(grep "rtt min/avg/max/mdev")
+# ping RTT statistics line is like below.
+# >rtt min/avg/max/mdev = 97.749/98.197/98.285/0.380 ms
+RTT_LINE=$(cat)
 
 if [ -z "${RTT_LINE}" ]; then
-  >&2 echo 'ERROR: The RTT statistics line is not found, which starts with "rtt min/avg/max/mdev = ..."'
+  >&2 echo 'ERROR: std input for the RTT statistics line is empty'
+  exit 1
+if echo "${RTT_LINE}" | grep -q "rtt min/avg/max/mdev" ; then
+  >&2 echo 'ERROR: std input for the RTT statistics line does not start with "rtt min/avg/max/mdev":'
+  >&2 echo "> ${RTT_LINE}"
   exit 1
 elif [ "$(echo "${RTT_LINE}" | wc -l)" -ne 1 ]; then
-  >&2 echo 'ERROR: Multiple RTT statistics lines found, which starts with "rtt min/avg/max/mdev = ..."'
-  >&2 echo "${RTT_LINE}"
+  >&2 echo 'ERROR: Multiple lines in std input:'
+  >&2 echo "> ${RTT_LINE}"
   exit 1
 else
   # Parse the line (e.g.) "rtt min/avg/max/mdev = 97.749/98.197/98.285/0.380 ms"
