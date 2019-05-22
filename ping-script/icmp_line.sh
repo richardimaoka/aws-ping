@@ -107,13 +107,14 @@ else
   esac
 
   echo "{"  
-  echo "  \"bytes\": ${BYTES}"
-  echo "  \"target\": \"${TARGET}\""
-  echo "  \"target_ip\": \"${TARGET_IP}\""
-  echo "  \"icmp_seq\": ${ICMP_SEQ}"
-  echo "  \"ttl\": ${TTL}"
+  echo "  \"bytes\": ${BYTES},"
+  echo "  \"target\": \"${TARGET}\","
+  echo "  \"target_ip\": \"${TARGET_IP}\","
+  echo "  \"icmp_seq\": ${ICMP_SEQ},"
+  echo "  \"ttl\": ${TTL},"
   echo "  \"time\": {"
   echo "    \"unit\": \"${TIME_UNIT}\","
   echo "    \"value\": \"${TIME_VALUE}\""
+  echo "  }"  
   echo "}"  
 fi
