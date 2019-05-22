@@ -108,8 +108,8 @@ else
 
   echo "{"  
   echo "  \"bytes\": ${BYTES}"
-  echo "  \"target\": ${TARGET}"
-  echo "  \"target_ip\": ${TARGET_IP}"
+  echo "  \"target\": \"${TARGET}\""
+  echo "  \"target_ip\": \"${TARGET_IP}\""
   echo "  \"icmp_seq\": ${ICMP_SEQ}"
   echo "  \"ttl\": ${TTL}"
   echo "  \"time\": {"
