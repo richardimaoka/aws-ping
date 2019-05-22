@@ -58,9 +58,14 @@ else
   #     "value": 29034
   #   }
   # }
-  jo transmitted_packets="${PACKETS_TRANSMITTED}" \
-     packets_received="${PACKETS_RECEIVED}" \
-     packet_loss_percentage="${PACKET_LOSS_PERCENTAGE}" \
-     time="$(jo value="${TIME_VALUE}" unit="${TIME_UNIT}"))" 
+  echo "{"
+  echo "  \"packets_transmitted\": ${PACKETS_TRANSMITTED},"
+  echo "  \"packets_received\": ${PACKETS_RECEIVED},"
+  echo "  \"packet_loss_percentage\": ${PACKET_LOSS_PERCENTAGE},"
+  echo "  \"time\": {"
+  echo "    \"unit\": \"${TIME_UNIT}\","
+  echo "    \"value\": ${TIME_VALUE}"
+  echo "  }"
+  echo "}"
 fi
 
