@@ -38,8 +38,8 @@ else
     >&2 echo ">${SUMMARY_LINE}"
     exit 1
   # FOURTH_PART to be validated later
-  elif [ -z "$(echo "${FIFTH_PART}" | awk "/^\D{1,2}$/")" ]; then
-    >&2 echo "'${FIFTH_PART}' is not two non-digit chars, from the below summary line:"
+  elif [ -n "$(echo "${FIFTH_PART}" | awk "/[1-9]/")" ]; then
+    >&2 echo "'${FIFTH_PART}' should not include any digit, from the below summary line:"
     >&2 echo ">${SUMMARY_LINE}"
     exit 1
   fi

@@ -47,7 +47,15 @@ else
   # (e.g.)"time 29034ms"
   TIME_VALUE=$(echo "${FOURTH_PART}" | awk '{print $2}'| grep -o '^[0-9]*')
   TIME_UNIT=$(echo "${FOURTH_PART}" | awk '{print $2}'| sed 's/^[0-9]*//')
-  
+  case "$TIME_UNIT" in
+    ms)
+      TIME_UNIT="milliseconds"
+      ;;
+    s)
+      TIME_UNIT="seconds"
+      ;;
+  esac
+
   # JSON like below in a single line
   # {
   #   "packets_transmitted": 30,
