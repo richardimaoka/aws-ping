@@ -1,11 +1,10 @@
 #!/bin/sh
 
 # ----------------------------------------------------------------------------------------
-# You pass a single ping RTT statistics line as input stream, and this produecs JSON of it
+# You pass a single ping RTT statistics line like below, as input stream
+#   >rtt min/avg/max/mdev = 97.749/98.197/98.285/0.380 ms
+# and this produecs JSON of it
 # ----------------------------------------------------------------------------------------
-
-# ping RTT statistics line is like below.
-# >rtt min/avg/max/mdev = 97.749/98.197/98.285/0.380 ms
 RTT_LINE=$(cat)
 
 if [ -z "${RTT_LINE}" ]; then

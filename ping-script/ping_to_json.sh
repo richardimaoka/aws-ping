@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# ----------------------------------------------------------------------------------------
+# You pass the whole ping output as input stream, and this produces the JSON of it.
+# You can do like this (e.g.):
+#   ping google.com | ./ping_to_json.sh
+# ----------------------------------------------------------------------------------------
+
 # cd to the current directory as it runs other shell scripts
 cd "$(dirname "$0")" || exit
 

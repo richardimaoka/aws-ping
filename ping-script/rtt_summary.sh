@@ -1,14 +1,10 @@
 #!/bin/sh
 
 # ----------------------------------------------------------------------------------------
-# You pass the ping output as input stream, and this produecs JSON of the ping summary
+# You pass a single ping RTT summary line like below, as input stream
+#   >30 packets transmitted, 30 received, 0% packet loss, time 29034ms
+# and this produecs JSON of it
 # ----------------------------------------------------------------------------------------
-
-# ping summary lines are like below. Extracting the line starting with "30 packets transmitted...", 
-#
-# > --- 10.116.4.5 ping statistics ---
-# > 30 packets transmitted, 30 received, 0% packet loss, time 29034ms ## <- this is the summary line
-# > rtt min/avg/max/mdev = 97.749/98.197/98.285/0.380 ms
 SUMMARY_LINE="$(cat)"
 
 if [ -z "${SUMMARY_LINE}" ]; then
@@ -22,7 +18,7 @@ elif [ "$(echo "${SUMMARY_LINE}" | wc -l)" -ne 1 ]; then
   >&2 echo 'ERROR: Multiple lines in std input for the RTT summary line:'
   >&2 echo ">${SUMMARY_LINE}"
   exit 1
-elseelse
+else
   # Parse the line (e.g.) "30 packets transmitted, 30 received, 0% packet loss, time 29034ms"
   
   # part-by-part validation
