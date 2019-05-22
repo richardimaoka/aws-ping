@@ -53,7 +53,7 @@ else
   if [ -z "${FIRST_HALF_FIFTH_PART}" ]; then
     TARGET_IP="${FIRST_HALF_FOURTH_PART}"
   else
-    TARGET_IP="$(echo "${FIRST_HALF_FOURTH_PART}" | sed -e "s/(//" | sed -e "s/)//" )"
+    TARGET_IP="$(echo "${FIRST_HALF_FIFTH_PART}" | sed -e "s/(//" | sed -e "s/)//" )"
   fi
 
   # part-by-part validation in SECOND_HALF
