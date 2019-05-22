@@ -114,7 +114,7 @@ else
   echo "  \"ttl\": ${TTL},"
   echo "  \"time\": {"
   echo "    \"unit\": \"${TIME_UNIT}\","
-  echo "    \"value\": \"${TIME_VALUE}\""
+  echo "    \"value\": ${TIME_VALUE}"
   echo "  }"  
   echo "}"  
 fi
