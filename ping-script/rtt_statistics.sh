@@ -25,19 +25,23 @@ else
   FOURTH_PART=$(echo "${RTT_LINE}" | awk '{print $4}') # (e.g.) "97.749/98.197/98.285/0.380"
   FIFTH_PART=$(echo "${RTT_LINE}"  | awk '{print $5}') # (e.g.) "ms"
 
-  if [ "${FIRST_PART}" = "rtt" ] ; then
+  if [ "${FIRST_PART}" != "rtt" ] ; then
     >&2 echo "'${FIRST_PART}' is not equal to 'rtt', from the below summary line:"
     >&2 echo ">${SUMMARY_LINE}"
-  elif [ "${SECOND_PART}" = "min/avg/max/mdev" ] ; then
+    exit 1
+  elif [ "${SECOND_PART}" != "min/avg/max/mdev" ] ; then
     >&2 echo "'${SECOND_PART}' is not equal to 'min/avg/max/mdev', from the below summary line:"
     >&2 echo ">${SUMMARY_LINE}"
-  elif [ "${THIRD_PART}" = "=" ] ; then
+    exit 1
+  elif [ "${THIRD_PART}" != "=" ] ; then
     >&2 echo "'${THIRD_PART}' is not equal to '=', from the below summary line:"
     >&2 echo ">${SUMMARY_LINE}"
+    exit 1
   # FOURTH_PART to be validated later
   elif [ -z "$(echo "${FIFTH_PART}" | awk "/^\D{1,2}$/")" ]; then
     >&2 echo "'${FIFTH_PART}' is not two non-digit chars, from the below summary line:"
     >&2 echo ">${SUMMARY_LINE}"
+    exit 1
   fi
 
   # Validate and retrieve values from FOURTH_PART
