@@ -47,6 +47,15 @@ else
     exit 1
   fi
 
+  # retrieve values from FIRST_HALF
+  BYTES="${FIRST_HALF_FIRST_PART}"
+  TARGET="${FIRST_HALF_FOURTH_PART}"
+  if [ -z "${FIRST_HALF_FIFTH_PART}" ]; then
+    TARGET_IP="${FIRST_HALF_FOURTH_PART}"
+  else
+    TARGET_IP="$(echo "${FIRST_HALF_FOURTH_PART}" | sed -e "s/(//" | sed -e "s/)//" )"
+  fi
+
   # part-by-part validation in SECOND_HALF
   SECOND_HALF_FIRST_PART=$(echo "${SECOND_HALF}"  | awk '{print $1}') # (e.g.) "icmp_seq=1"
   SECOND_HALF_SECOND_PART=$(echo "${SECOND_HALF}" | awk '{print $2}') # (e.g.) "ttl=57"
@@ -96,4 +105,15 @@ else
       TIME_UNIT="seconds"
       ;;
   esac
+
+  echo "{"  
+  echo "  \"bytes\": ${BYTES}"
+  echo "  \"target\": ${TARGET}"
+  echo "  \"target_ip\": ${TARGET_IP}"
+  echo "  \"icmp_seq\": ${ICMP_SEQ}"
+  echo "  \"ttl\": ${TTL}"
+  echo "  \"time\": {"
+  echo "    \"unit\": \"${TIME_UNIT}\","
+  echo "    \"value\": \"${TIME_VALUE}\""
+  echo "}"  
 fi
