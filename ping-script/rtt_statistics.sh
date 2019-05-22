@@ -13,7 +13,11 @@
 RTT_LINE=$(grep "rtt min/avg/max/mdev")
 
 if [ -z "${RTT_LINE}" ]; then
-  >&2 echo 'The RTT statistics line, which starts with "rtt min/avg/max/mdev = ..." is not found'
+  >&2 echo 'ERROR: The RTT statistics line is not found, which starts with "rtt min/avg/max/mdev = ..."'
+  exit 1
+elif [ "$(wc -l "${RTT_LINE}")" -ne 1 ]; then
+  >&2 echo 'ERROR: Multiple RTT statistics lines found, which starts with "rtt min/avg/max/mdev = ..."'
+  >&2 echo "${RTT_LINE}"
   exit 1
 else
   # Parse the line (e.g.) "rtt min/avg/max/mdev = 97.749/98.197/98.285/0.380 ms"
@@ -26,21 +30,21 @@ else
   FIFTH_PART=$(echo "${RTT_LINE}"  | awk '{print $5}') # (e.g.) "ms"
 
   if [ "${FIRST_PART}" != "rtt" ] ; then
-    >&2 echo "'${FIRST_PART}' is not equal to 'rtt', from the below summary line:"
-    >&2 echo ">${SUMMARY_LINE}"
+    >&2 echo "ERROR: '${FIRST_PART}' is not equal to 'rtt', in the below RTT line:"
+    >&2 echo ">${RTT_LINE}"
     exit 1
   elif [ "${SECOND_PART}" != "min/avg/max/mdev" ] ; then
-    >&2 echo "'${SECOND_PART}' is not equal to 'min/avg/max/mdev', from the below summary line:"
-    >&2 echo ">${SUMMARY_LINE}"
+    >&2 echo "ERROR: '${SECOND_PART}' is not equal to 'min/avg/max/mdev', in the below RTT line:"
+    >&2 echo ">${RTT_LINE}"
     exit 1
   elif [ "${THIRD_PART}" != "=" ] ; then
-    >&2 echo "'${THIRD_PART}' is not equal to '=', from the below summary line:"
-    >&2 echo ">${SUMMARY_LINE}"
+    >&2 echo "ERROR: '${THIRD_PART}' is not equal to '=', in the below RTT line:"
+    >&2 echo ">${RTT_LINE}"
     exit 1
   # FOURTH_PART to be validated later
   elif [ -n "$(echo "${FIFTH_PART}" | awk "/[1-9]/")" ]; then
-    >&2 echo "'${FIFTH_PART}' should not include any digit, from the below summary line:"
-    >&2 echo ">${SUMMARY_LINE}"
+    >&2 echo "ERROR: '${FIFTH_PART}' should not include any digit, in the below RTT line:"
+    >&2 echo ">${RTT_LINE}"
     exit 1
   fi
 
@@ -48,29 +52,29 @@ else
   # (e.g.) "97.749/98.197/98.285/0.380"
   RTT_MIN=$(echo "${FOURTH_PART}" | awk -F'/' '{print $1}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_MIN}" ]; then 
-    >&2 echo "Cannot retrieve the first number fron '/'-delimited '${FOURTH_PART}', from the below summary line:"
-    >&2 echo "> ${RTT_LINE}"
+    >&2 echo "ERROR: Cannot retrieve the first number from '/'-delimited '${FOURTH_PART}', in the below RTT line:"
+    >&2 echo ">${RTT_LINE}"
     exit 1
   fi
   # (e.g.) "97.749/98.197/98.285/0.380"
   RTT_AVG=$(echo "$FOURTH_PART" | awk -F'/' '{print $2}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_AVG}" ]; then 
-    >&2 echo "Cannot retrieve the second number fron '/'-delimited '${FOURTH_PART}', from the below summary line:"
-    >&2 echo "> ${RTT_LINE}"
+    >&2 echo "ERROR: Cannot retrieve the second number from '/'-delimited '${FOURTH_PART}', in the below RTT line:"
+    >&2 echo ">${RTT_LINE}"
     exit 1
   fi
   # (e.g.) "97.749/98.197/98.285/0.380"
   RTT_MAX=$(echo "$FOURTH_PART" | awk -F'/' '{print $3}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_MAX}" ]; then 
-    >&2 echo "Cannot retrieve the third number fron '/'-delimited '${FOURTH_PART}', from the below summary line:"
-    >&2 echo "> ${RTT_LINE}"
+    >&2 echo "ERROR: Cannot retrieve the third number from '/'-delimited '${FOURTH_PART}', in the below RTT line:"
+    >&2 echo ">${RTT_LINE}"
     exit 1
   fi
   # (e.g.) "97.749/98.197/98.285/0.380"
   RTT_MDEV=$(echo "$FOURTH_PART" | awk -F'/' '{print $4}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_MDEV}" ]; then 
-    >&2 echo "Cannot retrieve the fourth number fron '/'-delimited '${FOURTH_PART}', from the below summary line:"
-    >&2 echo "> ${RTT_LINE}"
+    >&2 echo "ERROR: Cannot retrieve the fourth number from '/'-delimited '${FOURTH_PART}', in the below RTT line:"
+    >&2 echo ">${RTT_LINE}"
     exit 1
   fi
 
