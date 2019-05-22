@@ -61,7 +61,10 @@ if [ -n "${CURRENT_REGION}" ]; then
         echo "${TAG}" >> /tmp/"${FILE_NAME}"
         echo "" >> /tmp/"${FILE_NAME}"
         echo "traceroute ${TARGET_IP_ADDRESS}" >> /tmp/"${FILE_NAME}"
-        traceroute "${TARGET_IP_ADDRESS}" >> /tmp/"${FILE_NAME}"
+        # https://serverfault.com/questions/153018/traceroute-does-not-work-output-is-but-network-is-fine
+        #   > By default, traceroute uses high UDP ports for tracing hosts .... Try to add the "-I" (uppercase i) 
+        # and the -I needs sudo
+        sudo traceroute -I "${TARGET_IP_ADDRESS}" >> /tmp/"${FILE_NAME}"
         echo "" >> /tmp/"${FILE_NAME}"
         echo "Pinging an instance in ${AVAILABILITY_ZONE} from ${LOCAL_IPV4}" >> /tmp/"${FILE_NAME}"
         ping -c 30 "${TARGET_IP_ADDRESS}" >> /tmp/"${FILE_NAME}"
