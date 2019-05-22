@@ -41,7 +41,7 @@ else
     >&2 echo "ERROR: empty host name or ip address"
     >&2 echo 
     exit 1
-  elif [ -n "${FIRST_HALF_FIFTH_PART}" ] && [ -z "$(echo "${FIRST_HALF_FIFTH_PART}" | awk '/^\((\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\)$/')" ]; then
+  elif [ -n "${FIRST_HALF_FIFTH_PART}" ] && [ -z "$(echo "${FIRST_HALF_FIFTH_PART}" | awk '/^\(([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)\)$/')" ]; then # awk regex does not allow \d{1,3}
     >&2 echo "ERROR: '${FIRST_HALF_FIFTH_PART}' is not in the form of '(***.***.***.***)'"
     >&2 echo 
     exit 1
