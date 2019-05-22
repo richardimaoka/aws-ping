@@ -52,28 +52,28 @@ else
   # (e.g.) "97.749/98.197/98.285/0.380"
   RTT_MIN=$(echo "${FOURTH_PART}" | awk -F'/' '{print $1}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_MIN}" ]; then 
-    >&2 echo "ERROR: Cannot retrieve the first number from '/'-delimited '${FOURTH_PART}', in the below RTT line:"
+    >&2 echo "ERROR: Cannot retrieve the first number from '${FOURTH_PART}', in the below RTT line:"
     >&2 echo ">${RTT_LINE}"
     exit 1
   fi
   # (e.g.) "97.749/98.197/98.285/0.380"
   RTT_AVG=$(echo "$FOURTH_PART" | awk -F'/' '{print $2}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_AVG}" ]; then 
-    >&2 echo "ERROR: Cannot retrieve the second number from '/'-delimited '${FOURTH_PART}', in the below RTT line:"
+    >&2 echo "ERROR: Cannot retrieve the second number from '${FOURTH_PART}', in the below RTT line:"
     >&2 echo ">${RTT_LINE}"
     exit 1
   fi
   # (e.g.) "97.749/98.197/98.285/0.380"
   RTT_MAX=$(echo "$FOURTH_PART" | awk -F'/' '{print $3}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_MAX}" ]; then 
-    >&2 echo "ERROR: Cannot retrieve the third number from '/'-delimited '${FOURTH_PART}', in the below RTT line:"
+    >&2 echo "ERROR: Cannot retrieve the third number from '${FOURTH_PART}', in the below RTT line:"
     >&2 echo ">${RTT_LINE}"
     exit 1
   fi
   # (e.g.) "97.749/98.197/98.285/0.380"
   RTT_MDEV=$(echo "$FOURTH_PART" | awk -F'/' '{print $4}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_MDEV}" ]; then 
-    >&2 echo "ERROR: Cannot retrieve the fourth number from '/'-delimited '${FOURTH_PART}', in the below RTT line:"
+    >&2 echo "ERROR: Cannot retrieve the fourth number from '${FOURTH_PART}', in the below RTT line:"
     >&2 echo ">${RTT_LINE}"
     exit 1
   fi

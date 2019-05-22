@@ -36,7 +36,7 @@ else
   elif [ -z "$(echo "${THIRD_PART}" | awk "/^\s[0-9]+\%\spacket\sloss$/")" ] ; then
     >&2 echo "ERROR: '${THIRD_PART}', is not in the form of ' **% packet loss', from the below summary line:"
     >&2 echo ">${SUMMARY_LINE}"
-  elif [ -z "$(echo "${FOURTH_PART}" | awk "/^\stime\s[0-9]+\D{1,2}$/")" ]; then
+  elif [ -z "$(echo "${FOURTH_PART}" | awk "/^\stime\s[0-9]+\[a-z]{1,2}$/")" ]; then
     >&2 echo "ERROR: '${FOURTH_PART}', is not in the form of ' time **ms', from the below summary line:"
     >&2 echo ">${SUMMARY_LINE}"
   fi
