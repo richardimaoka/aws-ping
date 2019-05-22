@@ -9,16 +9,20 @@
 # > --- 10.116.4.5 ping statistics ---
 # > 30 packets transmitted, 30 received, 0% packet loss, time 29034ms ## <- this is the summary line
 # > rtt min/avg/max/mdev = 97.749/98.197/98.285/0.380 ms
-SUMMARY_LINE=$(grep "packets transmitted, " | grep "received, " | grep " packet loss, " | grep "time ")
+SUMMARY_LINE="$(cat)"
 
 if [ -z "${SUMMARY_LINE}" ]; then
-  >&2 echo 'ERROR: The summary line like "30 packets transmitted, 30 received, 0% packet loss, time 29034ms" is not found.'
+  >&2 echo 'ERROR: std input for the RTT summary line is empty'
   exit 1
-elif [ "$(echo "${SUMMARY_LINE}" | wc -l )" -ne 1 ]; then
-  >&2 echo 'ERROR: Multiple summary lines found, which are like "30 packets transmitted, 30 received, 0% packet loss, time 29034ms" is not found.'
-  >&2 echo "${SUMMARY_LINE}"
+elif ! echo "${SUMMARY_LINE}" | grep -q "packets transmitted, " | grep "received, " | grep " packet loss, " | grep -q "time " ; then  >&2 echo 'ERROR: std input for the RTT summary line is not in the form of "** packets transmitted, ** received, *% packet loss, time ****ms"'
+  >&2 echo 'ERROR: std input for the RTT summary line is not in the form of "** packets transmitted, ** received, *% packet loss, time ****ms"'
+  >&2 echo ">${SUMMARY_LINE}"
   exit 1
-else
+elif [ "$(echo "${SUMMARY_LINE}" | wc -l)" -ne 1 ]; then
+  >&2 echo 'ERROR: Multiple lines in std input for the RTT summary line:'
+  >&2 echo ">${SUMMARY_LINE}"
+  exit 1
+elseelse
   # Parse the line (e.g.) "30 packets transmitted, 30 received, 0% packet loss, time 29034ms"
   
   # part-by-part validation

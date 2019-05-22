@@ -16,7 +16,7 @@ elif echo "${RTT_LINE}" | grep -q "rtt min/avg/max/mdev" ; then
   >&2 echo ">${RTT_LINE}"
   exit 1
 elif [ "$(echo "${RTT_LINE}" | wc -l)" -ne 1 ]; then
-  >&2 echo 'ERROR: Multiple lines in std input:'
+  >&2 echo 'ERROR: Multiple lines in std input for the RTT statistics line:'
   >&2 echo ">${RTT_LINE}"
   exit 1
 else
