@@ -52,21 +52,21 @@ else
   RTT_AVG=$(echo "$FOURTH_PART" | awk -F'/' '{print $2}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_AVG}" ]; then 
     >&2 echo "Cannot retrieve the second number fron '/'-delimited '${FOURTH_PART}', from the below summary line:"
-    echo "> ${RTT_LINE}"
+    >&2 echo "> ${RTT_LINE}"
     exit 1
   fi
   # (e.g.) "97.749/98.197/98.285/0.380"
   RTT_MAX=$(echo "$FOURTH_PART" | awk -F'/' '{print $3}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_MAX}" ]; then 
     >&2 echo "Cannot retrieve the third number fron '/'-delimited '${FOURTH_PART}', from the below summary line:"
-    echo "> ${RTT_LINE}"
+    >&2 echo "> ${RTT_LINE}"
     exit 1
   fi
   # (e.g.) "97.749/98.197/98.285/0.380"
   RTT_MDEV=$(echo "$FOURTH_PART" | awk -F'/' '{print $4}'| awk '/^[+-]?([0-9]*[.])?[0-9]+$/')
   if [ -z "${RTT_MDEV}" ]; then 
     >&2 echo "Cannot retrieve the fourth number fron '/'-delimited '${FOURTH_PART}', from the below summary line:"
-    echo "> ${RTT_LINE}"
+    >&2 echo "> ${RTT_LINE}"
     exit 1
   fi
 
@@ -80,28 +80,18 @@ else
       ;;
   esac
   
-  # JSON like below in a single line
+  # JSON like below
   # {
-  #   "min": {
-  #     "value": 97.749,
-  #     "unit":"milliseconds"
-  #   },
-  #   "avg": {
-  #     "value": 98.197,
-  #     "unit":"milliseconds"
-  #   },
-  #   "max": {
-  #     "value": 98.285,
-  #     "unit":"milliseconds"
-  #   },
-  #   "mdev": {
-  #     "value": 0.380,
-  #     "unit":"milliseconds"
-  #   }
+  #   "min":  { "value": 97.749, "unit": "milliseconds" },
+  #   "avg":  { "value": 98.197, "unit": "milliseconds" },
+  #   "max":  { "value": 98.285, "unit": "milliseconds" },
+  #   "mdev": { "value": 0.380,  "unit":"milliseconds" }
   # }
-  jo min="$(jo value="${RTT_MIN}" unit="${RTT_UNIT}")" \
-     avg="$(jo value="${RTT_AVG}" unit="${RTT_UNIT}")" \
-     max="$(jo value="${RTT_MAX}" unit="${RTT_UNIT}")" \
-     mdev="$(jo value="${RTT_MDEV}" unit="${RTT_UNIT}")"
+  echo "{"
+  echo "  \"min\":  { \"value\": \"${RTT_MIN}\",  \"unit\": \"${RTT_UNIT}\" },"
+  echo "  \"avg\":  { \"value\": \"${RTT_AVG}\",  \"unit\": \"${RTT_UNIT}\" },"
+  echo "  \"max\":  { \"value\": \"${RTT_MAX}\",  \"unit\": \"${RTT_UNIT}\" },"
+  echo "  \"mdev\": { \"value\": \"${RTT_MDEV}\", \"unit\": \"${RTT_UNIT}\" }"
+  echo "}"
 fi
 
