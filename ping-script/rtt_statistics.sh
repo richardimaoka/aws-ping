@@ -15,7 +15,7 @@ RTT_LINE=$(grep "rtt min/avg/max/mdev")
 if [ -z "${RTT_LINE}" ]; then
   >&2 echo 'ERROR: The RTT statistics line is not found, which starts with "rtt min/avg/max/mdev = ..."'
   exit 1
-elif [ "$(wc -l "${RTT_LINE}")" -ne 1 ]; then
+elif [ "$(echo "${RTT_LINE}" | wc -l)" -ne 1 ]; then
   >&2 echo 'ERROR: Multiple RTT statistics lines found, which starts with "rtt min/avg/max/mdev = ..."'
   >&2 echo "${RTT_LINE}"
   exit 1

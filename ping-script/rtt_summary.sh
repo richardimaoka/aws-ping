@@ -14,7 +14,7 @@ SUMMARY_LINE=$(grep "packets transmitted, " | grep "received, " | grep " packet 
 if [ -z "${SUMMARY_LINE}" ]; then
   >&2 echo 'ERROR: The summary line like "30 packets transmitted, 30 received, 0% packet loss, time 29034ms" is not found.'
   exit 1
-elif [ "$(wc -l "${SUMMARY_LINE}")" -ne 1 ]; then
+elif [ "$(echo "${SUMMARY_LINE}" | wc -l )" -ne 1 ]; then
   >&2 echo 'ERROR: Multiple summary lines found, which are like "30 packets transmitted, 30 received, 0% packet loss, time 29034ms" is not found.'
   >&2 echo "${RTT_LINE}"
   exit 1
