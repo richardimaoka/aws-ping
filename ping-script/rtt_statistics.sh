@@ -13,11 +13,11 @@ if [ -z "${RTT_LINE}" ]; then
   exit 1
 elif echo "${RTT_LINE}" | grep -q "rtt min/avg/max/mdev" ; then
   >&2 echo 'ERROR: std input for the RTT statistics line does not start with "rtt min/avg/max/mdev":'
-  >&2 echo "> ${RTT_LINE}"
+  >&2 echo ">${RTT_LINE}"
   exit 1
 elif [ "$(echo "${RTT_LINE}" | wc -l)" -ne 1 ]; then
   >&2 echo 'ERROR: Multiple lines in std input:'
-  >&2 echo "> ${RTT_LINE}"
+  >&2 echo ">${RTT_LINE}"
   exit 1
 else
   # Parse the line (e.g.) "rtt min/avg/max/mdev = 97.749/98.197/98.285/0.380 ms"
