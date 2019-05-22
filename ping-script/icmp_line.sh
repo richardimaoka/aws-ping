@@ -57,11 +57,11 @@ else
     >&2 echo "ERROR: '${SECOND_HALF_FIRST_PART}' is not in the form of 'icmp_seq=*'"
     >&2 echo 
     exit 1
-  elif [ "$(echo "${SECOND_HALF_SECOND_PART}" | awk '/^ttl=[0-9]+$/')" ] ; then
+  elif [ -z "$(echo "${SECOND_HALF_SECOND_PART}" | awk '/^ttl=[0-9]+$/')" ] ; then
     >&2 echo "ERROR: '${SECOND_HALF_SECOND_PART}' is not in the form of 'ttl=*'"
     >&2 echo 
     exit 1
-  elif [ "$(echo "${SECOND_HALF_THIRD_PART}" | awk '/^time=([0-9]*[.])?[0-9]+$/')" ] ; then
+  elif [ -z "$(echo "${SECOND_HALF_THIRD_PART}" | awk '/^time=([0-9]*[.])?[0-9]+$/')" ] ; then
     >&2 echo "ERROR: '${SECOND_HALF_THIRD_PART}' is not in the form of 'time=*'"
     >&2 echo 
     exit 1
