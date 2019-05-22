@@ -11,7 +11,7 @@ RTT_LINE=$(cat)
 if [ -z "${RTT_LINE}" ]; then
   >&2 echo 'ERROR: std input for the RTT statistics line is empty'
   exit 1
-elif echo "${RTT_LINE}" | grep -q "rtt min/avg/max/mdev" ; then
+elif ! echo "${RTT_LINE}" | grep -q "rtt min/avg/max/mdev" ; then
   >&2 echo 'ERROR: std input for the RTT statistics line does not start with "rtt min/avg/max/mdev":'
   >&2 echo ">${RTT_LINE}"
   exit 1
