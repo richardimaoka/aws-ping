@@ -53,15 +53,15 @@ else
   SECOND_HALF_THIRD_PART=$(echo "${SECOND_HALF}"  | awk '{print $3}') # (e.g.) "time=98.2"
   SECOND_HALF_FOURTH_PART=$(echo "${SECOND_HALF}"  | awk '{print $4}') # (e.g.) "ms"
 
-  if [ -z "$("${SECOND_HALF_FIRST_PART}" | awk '/^\sicmp_seq=[0-9]+$/')" ] ; then
+  if [ -z "$(echo "${SECOND_HALF_FIRST_PART}" | awk '/^icmp_seq=[0-9]+$/')" ] ; then
     >&2 echo "ERROR: '${SECOND_HALF_FIRST_PART}' is not in the form of 'icmp_seq=*'"
     >&2 echo 
     exit 1
-  elif [ "$("${SECOND_HALF_SECOND_PART}" | awk '/^ttl=[0-9]+$/')" ] ; then
+  elif [ "$("echo ${SECOND_HALF_SECOND_PART}" | awk '/^ttl=[0-9]+$/')" ] ; then
     >&2 echo "ERROR: '${SECOND_HALF_SECOND_PART}' is not in the form of 'ttl=*'"
     >&2 echo 
     exit 1
-  elif [ "$("${SECOND_HALF_THIRD_PART}" | awk '/^time=([0-9]*[.])?[0-9]+$/')" ] ; then
+  elif [ "$("echo ${SECOND_HALF_THIRD_PART}" | awk '/^time=([0-9]*[.])?[0-9]+$/')" ] ; then
     >&2 echo "ERROR: '${SECOND_HALF_THIRD_PART}' is not in the form of 'time=*'"
     >&2 echo 
     exit 1
