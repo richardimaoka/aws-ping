@@ -22,7 +22,7 @@ do
           echo "option -f or --region requires an argument -- $1" 1>&2
           exit 1
       fi
-      AZ="$2"
+      REGION="$2"
       shift 2
       ;;
   esac
@@ -35,7 +35,7 @@ if [ -z "${STACK_NAME}" ] ; then
   >&2 echo "ERROR: Option --stack-name needs to be specified"
   ERROR="1"
 fi
-if [ -z "${AZ}" ] ; then
+if [ -z "${REGION}" ] ; then
   >&2 echo "ERROR: Option --region needs to be specified"
   ERROR="1"
 fi
