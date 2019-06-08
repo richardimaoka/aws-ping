@@ -131,39 +131,73 @@ us-east-2
 us-west-1
 us-west-2
 
+## update stack
+STACK_NAME=PingCrossRegionExperiment
+AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+SSH_LOCATION="$(curl ifconfig.co 2> /dev/null)/32"
 
-## region map
-#!/bin/sh
-
-echo "Copy and paste the below output to the 'Mappings' section of the cloudformation.yaml file.\n"
-echo "Mappings:"
-echo "  RegionMap:"
-
-# Second octet of the IP address
-SECOND_OCTET="101"
-
-# https://stackoverflow.com/questions/38148397/is-there-a-way-to-pipe-the-output-of-one-aws-cli-command-as-the-input-to-another
-#   > it's important to wrap the "InstanceId" portion of the --query parameter value in brackets [InstanceId]
-# In the below case, RegionName is wrapped into [RegionName]
-for REGION in $(aws ec2 describe-regions --query "Regions[].[RegionName]" --output text)
+for REGION in $(aws ec2 describe-regions --query "Regions[].RegionName" --output text)
 do 
-    NUM_AVAILABILITY_ZONES=$(aws ec2 describe-availability-zones \
-      --region "${REGION}" \
-      --query "AvailabilityZones[] | length(@)"
-    )
+  echo "Updatiing a CloudFormation stack=${STACK_NAME} for region=${REGION}"
 
-    # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html
-    AMI_LINUX2=$(aws ec2 describe-images \
-      --region "${REGION}" \
-      --owners amazon \
-      --filters 'Name=name,Values=amzn2-ami-hvm-2.0.????????-x86_64-gp2' 'Name=state,Values=available' \
-      --query "reverse(sort_by(Images, &CreationDate))[0].ImageId" \
-      --output text
-    )
-
-    echo "    ${REGION}:"
-    echo "      NumberOfAvailabilityZones: ${NUM_AVAILABILITY_ZONES}"
-    echo "      RegionSubnet: 10.${SECOND_OCTET}"
-    echo "      AmazonLinux2AMI: ${AMI_LINUX2}"
-    SECOND_OCTET=$((SECOND_OCTET+1))
+  # If it fails, an error message is displayed and it continues to the next REGION
+  aws cloudformation update-stack \
+    --stack-name "${STACK_NAME}" \
+    --template-body file://cloudformation-vpc.yaml \
+    --capabilities CAPABILITY_NAMED_IAM \
+    --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
+                  ParameterKey=AWSAccountId,ParameterValue="${AWS_ACCOUNT_ID}" \
+    --region "${REGION}" \
+    --output text
 done 
+
+
+## Athena 
+
+https://aws.amazon.com/blogs/big-data/create-tables-in-amazon-athena-from-nested-json-and-mappings-using-jsonserde/
+
+https://docs.aws.amazon.com/en_us/athena/latest/ug/creating-tables.html#all-tables-are-external
+
+```
+CREATE EXTERNAL TABLE results (
+  metadata struct<source_region:STRING,
+                  target_region:STRING,
+                  test_uuid:STRING
+                 >,
+  rtt_summary struct<packets_transmitted:INT,
+                     packets_received:INT,
+                     packets_loss_percentage:DOUBLE,
+                     time:struct<unit:string,value:DOUBLE>
+                    >,
+  rtt_statistics struct<min:struct<unit:string,value:DOUBLE>,
+                        avg:struct<unit:string,value:DOUBLE>,
+                        max:struct<unit:string,value:DOUBLE>,
+                        mdev:struct<unit:string,value:DOUBLE>
+                       >
+)                 
+ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
+LOCATION 's3://samplebucket-richardimaoka-sample-sample/aws-iperf-cross-region'
+```
+
+
+```
+SELECT 
+  metadata.test_uuid,
+  metadata.target_region,
+  metadata.source_region,
+  rtt_statistics.min.value as min_value,
+  rtt_statistics.min.unit  as min_unit,
+  rtt_statistics.max.value as max_value,
+  rtt_statistics.max.unit  as max_unit,
+  rtt_statistics.avg.value as avg_value,
+  rtt_statistics.avg.unit  as avg_unit
+FROM
+  "aws_ping_cross_region"."results"
+limit 10;
+```
+
+# Submodule 
+- git submodule add https://github.com/richardimaoka/ping-to-json.git
+- git clone --recurse-submodules https://github.com/richardimaoka/aws-iperf-cross-region
+- git submodule update --init --recursive
+  - https://github.blog/2016-02-01-working-with-submodules/
