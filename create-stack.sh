@@ -49,25 +49,25 @@ fi
 AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
 SSH_LOCATION="$(curl ifconfig.co 2> /dev/null)/32"
 
-if ! STACK_INFO=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --region "${AZ}" 2> /dev/null) ; then
-  echo "Creating a CloudFormation stack=${STACK_NAME} for region=${AZ}"
-  # If it fails, an error message is displayed and it continues to the next AZ
+if ! STACK_INFO=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --region "${REGION}" 2> /dev/null) ; then
+  echo "Creating a CloudFormation stack=${STACK_NAME} for region=${REGION}"
+  # If it fails, an error message is displayed and it continues to the next REGION
   STACK_INFO=$(aws cloudformation create-stack \
     --stack-name "${STACK_NAME}" \
     --template-body file://cloudformation-vpc.yaml \
     --capabilities CAPABILITY_NAMED_IAM \
     --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
                   ParameterKey=AWSAccountId,ParameterValue="${AWS_ACCOUNT_ID}" \
-    --region "${AZ}"
+    --region "${REGION}"
   )
 elif [ "CREATE_COMPLETED" != "$(echo "${STACK_INFO}" | jq -r '.Stacks[].StackStatus')" ] ; then
-  echo "Waiting until the CloudFormation stack is CREATE_COMPLETE for ${AZ}"
-  if ! aws cloudformation wait stack-create-complete --stack-name "${STACK_NAME}" --region "${AZ}"; then
-    >&2 echo "ERROR: CloudFormation wait failed for ${AZ}"
+  echo "Waiting until the CloudFormation stack is CREATE_COMPLETE for ${REGION}"
+  if ! aws cloudformation wait stack-create-complete --stack-name "${STACK_NAME}" --region "${REGION}"; then
+    >&2 echo "ERROR: CloudFormation wait failed for ${REGION}"
     exit 1
   fi
 else
-  echo "Cloudformatoin stack in ${AZ} already exists"
+  echo "Cloudformatoin stack in ${REGION} already exists"
 fi
 
 ###############################################
