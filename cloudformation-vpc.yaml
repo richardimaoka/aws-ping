@@ -113,3 +113,23 @@ Resources:
       FromPort: -1
       ToPort: -1
       CidrIp: !Ref SSHLocation
+
+Outputs:
+  VPCId:
+    Description: VPC
+    Value: !Ref VPC
+    Export:
+      Name: !Sub "${AWS::StackName}-VPCId"
+  RouteTable:
+    Value: !Ref RouteTable
+    Export:
+      Name: !Sub "${AWS::StackName}-RouteTable"
+  SecurityGroup:
+    Value: !Ref SecurityGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-SecurityGroup"
+  InstanceProfile:
+    Description: Instance profile for EC2 to use AWS CLI and EC2 SSM
+    Value: !Ref InstanceProfileSSM
+    Export:
+      Name: !Sub "${AWS::StackName}-InstanceProfile"
