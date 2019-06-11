@@ -52,58 +52,14 @@ SSH_LOCATION="$(curl ifconfig.co 2> /dev/null)/32"
 if ! STACK_INFO=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --region "${REGION}" 2> /dev/null) ; then
   echo "Creating a CloudFormation stack=${STACK_NAME} for region=${REGION}"
   # If it fails, an error message is displayed and it continues to the next REGION
-  STACK_INFO=$(aws cloudformation create-stack \
+  aws cloudformation create-stack \
     --stack-name "${STACK_NAME}" \
     --template-body file://cloudformation-vpc.yaml \
     --capabilities CAPABILITY_NAMED_IAM \
     --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
                   ParameterKey=AWSAccountId,ParameterValue="${AWS_ACCOUNT_ID}" \
     --region "${REGION}"
-  )
 else
   echo "Cloudformatoin stack in ${REGION} already exists"
 fi
 
-#######################################################
-# 3. Wait until the CloudFormation stack is ready
-#######################################################
-for REGION in ${REGIONS}
-do 
-  echo "Waiting until the CloudFormation stack is CREATE_COMPLETE for ${REGION}"
-  if ! aws cloudformation wait stack-create-complete --stack-name "${STACK_NAME}" --region "${REGION}"; then
-    >&2 echo "ERROR: CloudFormation wait failed for ${REGION}"
-    exit 1
-  fi    
-
-###############################################
-# 4 Create a Subnet for each Availability Zone
-###############################################
-
-SUBNETS=$(aws ec2 describe-subnets \
-  --filters "Name=tag:experiment-name,Values=${STACK_NAME}" \
-  --region "${REGION}"
-)
-
-# AZ: Availability Zone
-for AZ in $(aws ec2 describe-availability-zones \
-  --query "AvailabilityZones[?State=='available'].ZoneName" \
-  --output text \
-  --region "${REGION}")
-do
-  if [ -z "$(echo "${SUBNETS}" | jq -r ".Subnets[] | select(.AvailabilityZone==\"${AZ}\")")" ] ; then
-    echo "Creating a subnet in ${AZ}"
-    # VPC_CIDR_BLOCK=
-    # SUBNET_CIDR_BLOCK=
-    # SUBNET=$(aws ec2 create-subnet
-    #   --cidr-block SUBNET_CIDR_BLOCK
-    #   --vpc-id 
-    # )
-    # aws ec2 wait subnet-available
-    # aws ec2 associate-route-table
-    #   --cidr-block SUBNET_CIDR_BLOCK
-    #   --vpc-id 
-
-  else      
-    echo "A subnet in ${AZ} already exists"
-  fi
-done

@@ -132,7 +132,7 @@ us-west-1
 us-west-2
 
 ## update stack
-STACK_NAME=PingCrossRegionExperiment
+STACK_NAME=aws-ping
 AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
 SSH_LOCATION="$(curl ifconfig.co 2> /dev/null)/32"
 
