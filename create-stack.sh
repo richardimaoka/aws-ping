@@ -49,17 +49,36 @@ fi
 AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
 SSH_LOCATION="$(curl ifconfig.co 2> /dev/null)/32"
 
-if ! STACK_INFO=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --region "${REGION}" 2> /dev/null) ; then
-  echo "Creating a CloudFormation stack=${STACK_NAME} for region=${REGION}"
-  # If it fails, an error message is displayed and it continues to the next REGION
-  aws cloudformation create-stack \
-    --stack-name "${STACK_NAME}" \
-    --template-body file://cloudformation-vpc.yaml \
-    --capabilities CAPABILITY_NAMED_IAM \
-    --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
-                  ParameterKey=AWSAccountId,ParameterValue="${AWS_ACCOUNT_ID}" \
-    --region "${REGION}"
-else
-  echo "Cloudformatoin stack in ${REGION} already exists"
-fi
+SECOND_OCTET=101
+for REGION in $(aws ec2 describe-regions --query "Regions[].RegionName" --output text)
+do
+  if ! aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --region "${REGION}" 2> /dev/null ; then
+    echo "Creating a CloudFormation stack=${STACK_NAME} for region=${REGION}"
+    # If it fails, an error message is displayed and it continues to the next REGION
+
+    NUM_AVAILABILITY_ZONES=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'] | length(@)")
+    VPC_CIDR_BLOCK="10.${SECOND_OCTET}.0.0/32"
+    REGION_SUBNET="10.${SECOND_OCTET}"
+
+    echo "${VPC_CIDR_BLOCK}"
+    echo "${REGION_SUBNET}"
+
+    aws cloudformation create-stack \
+      --stack-name "${STACK_NAME}" \
+      --template-body file://cloudformation-vpc.yaml \
+      --capabilities CAPABILITY_NAMED_IAM \
+      --parameters ParameterKey=SSHLocation,ParameterValue="${SSH_LOCATION}" \
+                   ParameterKey=AWSAccountId,ParameterValue="${AWS_ACCOUNT_ID}" \
+                   ParameterKey=VPCCidrBlock,ParameterValue="${VPC_CIDR_BLOCK}" \
+                   ParameterKey=RegionSubnet,ParameterValue="${REGION_SUBNET}" \
+                   ParameterKey=NumAvailabilityZones,ParameterValue="${NUM_AVAILABILITY_ZONES}" \
+      --region "${REGION}"
+
+    SECOND_OCTET=$((SECOND_OCTET+1))
+  else
+    echo "Cloudformatoin stack in ${REGION} already exists"
+  fi
+
+
+done
 
