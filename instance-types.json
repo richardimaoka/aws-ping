@@ -1,0 +1,18 @@
+{
+  "eu-north-1":{"instance_type": "t3.micro"},
+  "ap-south-1":{"instance_type": "t2.micro"},
+  "eu-west-3":{"instance_type": "t2.micro"},
+  "eu-west-2":{"instance_type": "t2.micro"},
+  "eu-west-1":{"instance_type": "t2.micro"},
+  "ap-northeast-2":{"instance_type": "t2.micro"},
+  "ap-northeast-1":{"instance_type": "t2.micro"},
+  "sa-east-1":{"instance_type": "t2.micro"},
+  "ca-central-1":{"instance_type": "t2.micro"},
+  "ap-southeast-1":{"instance_type": "t2.micro"},
+  "ap-southeast-2":{"instance_type": "t2.micro"},
+  "eu-central-1":{"instance_type": "t2.micro"},
+  "us-east-1":{"instance_type": "t2.micro"},
+  "us-east-2":{"instance_type": "t2.micro"},
+  "us-west-1":{"instance_type": "t2.micro"},
+  "us-west-2":{"instance_type": "t2.micro"}
+}
