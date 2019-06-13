@@ -17,14 +17,6 @@ do
       STACK_NAME="$2"
       shift 2
       ;;
-    '--region' )
-      if [ -z "$2" ]; then
-          echo "option -f or --region requires an argument -- $1" 1>&2
-          exit 1
-      fi
-      REGION="$2"
-      shift 2
-      ;;
   esac
 done
 
@@ -33,13 +25,6 @@ done
 ######################################
 if [ -z "${STACK_NAME}" ] ; then
   >&2 echo "ERROR: Option --stack-name needs to be specified"
-  ERROR="1"
-fi
-if [ -z "${REGION}" ] ; then
-  >&2 echo "ERROR: Option --region needs to be specified"
-  ERROR="1"
-fi
-if [ -n "${ERROR}" ] ; then
   exit 1
 fi
 
@@ -57,11 +42,8 @@ do
     # If it fails, an error message is displayed and it continues to the next REGION
 
     NUM_AVAILABILITY_ZONES=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'] | length(@)")
-    VPC_CIDR_BLOCK="10.${SECOND_OCTET}.0.0/32"
+    VPC_CIDR_BLOCK="10.${SECOND_OCTET}.0.0/16"
     REGION_SUBNET="10.${SECOND_OCTET}"
-
-    echo "${VPC_CIDR_BLOCK}"
-    echo "${REGION_SUBNET}"
 
     aws cloudformation create-stack \
       --stack-name "${STACK_NAME}" \
@@ -72,7 +54,8 @@ do
                    ParameterKey=VPCCidrBlock,ParameterValue="${VPC_CIDR_BLOCK}" \
                    ParameterKey=RegionSubnet,ParameterValue="${REGION_SUBNET}" \
                    ParameterKey=NumAvailabilityZones,ParameterValue="${NUM_AVAILABILITY_ZONES}" \
-      --region "${REGION}"
+      --region "${REGION}" 1>/dev/null
+
 
     SECOND_OCTET=$((SECOND_OCTET+1))
   else
