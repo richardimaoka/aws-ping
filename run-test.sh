@@ -86,3 +86,12 @@ do
       --s3-bucket "${S3_BUCKET_NAME}"
   ) &
 done
+
+#####################################################
+# 4. Waiting until the child processes spawned in 3.
+# are finished
+######################################################
+for pid in $(jobs -p)
+do
+  wait $pid
+done
