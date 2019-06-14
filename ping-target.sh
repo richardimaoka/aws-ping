@@ -103,5 +103,5 @@ echo "------------------------------------------------"
 echo "Copying result-from-${SOURCE_AVAILABILITY_ZONE}-to-${TARGET_AVAILABILITY_ZONE}.log to s3://${S3_BUCKET_NAME}/aws-ping-cross-region/${TEST_EXECUTION_UUID}/"
 aws s3 cp \
   "result-from-${SOURCE_AVAILABILITY_ZONE}-to-${TARGET_AVAILABILITY_ZONE}.log" \
-  "s3://${S3_BUCKET_NAME}/aws-ping-cross-region/${TEST_EXECUTION_UUID}/result-from-${SOURCE_AVAILABILITY_ZONE}-to-${TARGET_AVAILABILITY_ZONE}.log"
+  "s3://${S3_BUCKET_NAME}/aws-ping-single-region/${TEST_EXECUTION_UUID}/result-from-${SOURCE_AVAILABILITY_ZONE}-to-${TARGET_AVAILABILITY_ZONE}.log"
 
