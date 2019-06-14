@@ -31,8 +31,6 @@ fi
 ######################################
 # 2. Generate JSON
 ######################################
-FILE_NAME=$(mktemp)
-
 # Start of JSON
 echo "{" 
 
@@ -53,13 +51,14 @@ do
   SECURITY_GROUP_ID=$(echo "${OUTPUTS}" | jq -r '.[] | select(.OutputKey=="SecurityGroup") | .OutputValue')
   IAM_INSTANCE_PROFILE=$(echo "${OUTPUTS}" | jq -r '.[] | select(.OutputKey=="InstanceProfile") | .OutputValue')
 
-  LAST_AVAILABILITY_ZONE=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'].ZoneName" --output text --region "${REGION}" | tail -1)
+  LAST_AVAILABILITY_ZONE=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'].[ZoneName]" --output text --region "${REGION}" | tail -1)
   for AVAILABILITY_ZONE in $(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'].ZoneName" --output text --region "${REGION}" )   
   do
     SUBNET_ID=$(aws ec2 describe-subnets --query "Subnets[?VpcId=='${VPC_ID}' && AvailabilityZone=='${AVAILABILITY_ZONE}'].SubnetId" --output text --region "${REGION}")
     INSTANCE_TYPE=$(cat instance-types.json | jq -r ".\"${REGION}\".instance_type")
     echo "\"${AVAILABILITY_ZONE}\": {" 
     echo "  \"image_id\": \"${AMI_LINUX2}\"," 
+    echo "  \"instance_type\": \"${INSTANCE_TYPE}\"," 
     echo "  \"security_group\": \"${SECURITY_GROUP_ID}\","
     echo "  \"instance_profile\": \"${IAM_INSTANCE_PROFILE}\"," 
     echo "  \"subnet_id\": \"${SUBNET_ID}\""
