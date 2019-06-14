@@ -37,12 +37,13 @@ SSH_LOCATION="$(curl ifconfig.co 2> /dev/null)/32"
 SECOND_OCTET=101
 for REGION in $(aws ec2 describe-regions --query "Regions[].RegionName" --output text)
 do
-  if ! aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --region "${REGION}" 2> /dev/null ; then
+  if ! aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --region "${REGION}" > /dev/null 2>&1 ; then
     echo "Creating a CloudFormation stack=${STACK_NAME} for region=${REGION}"
 
-    NUM_AVAILABILITY_ZONES=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'] | length(@)")
+    NUM_AVAILABILITY_ZONES=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'] | length(@)" --region "${REGION}") 
     VPC_CIDR_BLOCK="10.${SECOND_OCTET}.0.0/16"
     REGION_SUBNET="10.${SECOND_OCTET}"
+    echo "${REGION}: ${NUM_AVAILABILITY_ZONES}"
 
     # If it fails, an error message is displayed and it continues to the next REGION
     aws cloudformation create-stack \

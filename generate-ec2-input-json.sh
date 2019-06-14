@@ -34,7 +34,7 @@ fi
 FILE_NAME=$(mktemp)
 
 # Start of JSON
-echo "{" >> "${FILE_NAME}"
+echo "{" 
 
 LAST_REGION=$(aws ec2 describe-regions --query "Regions[].[RegionName]" --output text | tail -1)
 for REGION in $(aws ec2 describe-regions --query "Regions[].[RegionName]" --output text)
@@ -53,26 +53,24 @@ do
   SECURITY_GROUP_ID=$(echo "${OUTPUTS}" | jq -r '.[] | select(.OutputKey=="SecurityGroup") | .OutputValue')
   IAM_INSTANCE_PROFILE=$(echo "${OUTPUTS}" | jq -r '.[] | select(.OutputKey=="InstanceProfile") | .OutputValue')
 
-  LAST_AVAILABILITY_ZONE=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'].ZoneName" --output text | tail -1)
-  for AVAILABILITY_ZONE in $(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'].ZoneName" --output text)
+  LAST_AVAILABILITY_ZONE=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'].ZoneName" --output text --region "${REGION}" | tail -1)
+  for AVAILABILITY_ZONE in $(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'].ZoneName" --output text --region "${REGION}" )   
   do
-    aws ec2 describe-subnets --query "Subnets[?VpcId=='${VPC_ID}'].SubnetId" --output text
-    echo "\"${AVAILABILITY_ZONE}\": {" >> "${FILE_NAME}"
-    echo "  \"image_id\": \"${AMI_LINUX2}\"," >> "${FILE_NAME}"
-    echo "  \"security_group\": \"${SECURITY_GROUP_ID}\"," >> "${FILE_NAME}"
-    echo "  \"instance_profile\": \"${IAM_INSTANCE_PROFILE}\"," >> "${FILE_NAME}"
-    echo "  \"subnet_id\": \"${SUBNET_ID}\"" >> "${FILE_NAME}"
+    SUBNET_ID=$(aws ec2 describe-subnets --query "Subnets[?VpcId=='${VPC_ID}' && AvailabilityZone=='${AVAILABILITY_ZONE}'].SubnetId" --output text --region "${REGION}")
+    INSTANCE_TYPE=$(cat instance-types.json | jq -r ".\"${REGION}\".instance_type")
+    echo "\"${AVAILABILITY_ZONE}\": {" 
+    echo "  \"image_id\": \"${AMI_LINUX2}\"," 
+    echo "  \"security_group\": \"${SECURITY_GROUP_ID}\","
+    echo "  \"instance_profile\": \"${IAM_INSTANCE_PROFILE}\"," 
+    echo "  \"subnet_id\": \"${SUBNET_ID}\""
     if [ "${REGION}" = "${LAST_REGION}" ] && [ "${AVAILABILITY_ZONE}" = "${LAST_AVAILABILITY_ZONE}" ]; then
-      echo "}" >> "${FILE_NAME}"
+      echo "}"
     else
-      echo "}," >> "${FILE_NAME}"
+      echo "},"
     fi
   done
 done
 
 # End of JSON
-echo "}" >> "${FILE_NAME}"
+echo "}" 
 
-jq -s '.[0] * .[1]' "${FILE_NAME}" instance-types.json
-
-rm "${FILE_NAME}"
