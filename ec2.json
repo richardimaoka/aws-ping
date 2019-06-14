@@ -1,0 +1,394 @@
+{
+"eu-north-1a": {
+  "image_id": "ami-1fb13961",
+  "instance_type": "t3.micro",
+  "security_group": "sg-02513153b1d1fd09c",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1O8YBM306E5YN",
+  "subnet_id": "subnet-03d90335bbace1e34",
+  "region": "eu-north-1"
+},
+"eu-north-1b": {
+  "image_id": "ami-1fb13961",
+  "instance_type": "t3.micro",
+  "security_group": "sg-02513153b1d1fd09c",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1O8YBM306E5YN",
+  "subnet_id": "subnet-04464f42a3d25f34d",
+  "region": "eu-north-1"
+},
+"eu-north-1c": {
+  "image_id": "ami-1fb13961",
+  "instance_type": "t3.micro",
+  "security_group": "sg-02513153b1d1fd09c",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1O8YBM306E5YN",
+  "subnet_id": "subnet-0d59b476f3a630ce6",
+  "region": "eu-north-1"
+},
+"ap-south-1a": {
+  "image_id": "ami-00e782930f1c3dbc7",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0eb0c9b2f704b69ce",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-Q4V1HG6W8O0U",
+  "subnet_id": "subnet-0e3ea0bbef9f46d75",
+  "region": "ap-south-1"
+},
+"ap-south-1b": {
+  "image_id": "ami-00e782930f1c3dbc7",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0eb0c9b2f704b69ce",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-Q4V1HG6W8O0U",
+  "subnet_id": "subnet-0dbb1b856fd63a781",
+  "region": "ap-south-1"
+},
+"ap-south-1c": {
+  "image_id": "ami-00e782930f1c3dbc7",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0eb0c9b2f704b69ce",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-Q4V1HG6W8O0U",
+  "subnet_id": "subnet-06338ae0eefa840ff",
+  "region": "ap-south-1"
+},
+"eu-west-3a": {
+  "image_id": "ami-0ebb3a801d5fb8b9b",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0328efefb9e91e729",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-HYNTQRPOJC31",
+  "subnet_id": "subnet-0d62c8ce048686769",
+  "region": "eu-west-3"
+},
+"eu-west-3b": {
+  "image_id": "ami-0ebb3a801d5fb8b9b",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0328efefb9e91e729",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-HYNTQRPOJC31",
+  "subnet_id": "subnet-02a3142689ab8568e",
+  "region": "eu-west-3"
+},
+"eu-west-3c": {
+  "image_id": "ami-0ebb3a801d5fb8b9b",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0328efefb9e91e729",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-HYNTQRPOJC31",
+  "subnet_id": "subnet-0f6fc99b74600d18d",
+  "region": "eu-west-3"
+},
+"eu-west-2a": {
+  "image_id": "ami-0009a33f033d8b7b6",
+  "instance_type": "t2.micro",
+  "security_group": "sg-01796b3d10fdd92fd",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-5GXLVO0HI607",
+  "subnet_id": "subnet-004a6e74b376778f0",
+  "region": "eu-west-2"
+},
+"eu-west-2b": {
+  "image_id": "ami-0009a33f033d8b7b6",
+  "instance_type": "t2.micro",
+  "security_group": "sg-01796b3d10fdd92fd",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-5GXLVO0HI607",
+  "subnet_id": "subnet-041685410942ad529",
+  "region": "eu-west-2"
+},
+"eu-west-2c": {
+  "image_id": "ami-0009a33f033d8b7b6",
+  "instance_type": "t2.micro",
+  "security_group": "sg-01796b3d10fdd92fd",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-5GXLVO0HI607",
+  "subnet_id": "subnet-08fdd220bdf73b735",
+  "region": "eu-west-2"
+},
+"eu-west-1a": {
+  "image_id": "ami-030dbca661d402413",
+  "instance_type": "t2.micro",
+  "security_group": "sg-019256a25254df21b",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1NKNR5CJZ9GKZ",
+  "subnet_id": "subnet-0af1191f364ece174",
+  "region": "eu-west-1"
+},
+"eu-west-1b": {
+  "image_id": "ami-030dbca661d402413",
+  "instance_type": "t2.micro",
+  "security_group": "sg-019256a25254df21b",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1NKNR5CJZ9GKZ",
+  "subnet_id": "subnet-07de478cb3d5d9133",
+  "region": "eu-west-1"
+},
+"eu-west-1c": {
+  "image_id": "ami-030dbca661d402413",
+  "instance_type": "t2.micro",
+  "security_group": "sg-019256a25254df21b",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1NKNR5CJZ9GKZ",
+  "subnet_id": "subnet-0d07c9387dc27e64d",
+  "region": "eu-west-1"
+},
+"ap-northeast-2a": {
+  "image_id": "ami-08ab3f7e72215fe91",
+  "instance_type": "t2.micro",
+  "security_group": "sg-016889965ea939ffe",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-EEHUZTSDSVR8",
+  "subnet_id": "subnet-0100048551e00b62a",
+  "region": "ap-northeast-2"
+},
+"ap-northeast-2b": {
+  "image_id": "ami-08ab3f7e72215fe91",
+  "instance_type": "t2.micro",
+  "security_group": "sg-016889965ea939ffe",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-EEHUZTSDSVR8",
+  "subnet_id": "subnet-060ddf7f5e94a39a0",
+  "region": "ap-northeast-2"
+},
+"ap-northeast-2c": {
+  "image_id": "ami-08ab3f7e72215fe91",
+  "instance_type": "t2.micro",
+  "security_group": "sg-016889965ea939ffe",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-EEHUZTSDSVR8",
+  "subnet_id": "subnet-0c46493a1aff5e88a",
+  "region": "ap-northeast-2"
+},
+"ap-northeast-1a": {
+  "image_id": "ami-00d101850e971728d",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0584bf38bf4b0c8e8",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-111TG466TFNKV",
+  "subnet_id": "subnet-00925da67c168e2d1",
+  "region": "ap-northeast-1"
+},
+"ap-northeast-1c": {
+  "image_id": "ami-00d101850e971728d",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0584bf38bf4b0c8e8",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-111TG466TFNKV",
+  "subnet_id": "subnet-03214270cd59d635f",
+  "region": "ap-northeast-1"
+},
+"ap-northeast-1d": {
+  "image_id": "ami-00d101850e971728d",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0584bf38bf4b0c8e8",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-111TG466TFNKV",
+  "subnet_id": "subnet-0c66a72cffeceec31",
+  "region": "ap-northeast-1"
+},
+"sa-east-1a": {
+  "image_id": "ami-058141e091292ecf0",
+  "instance_type": "t2.micro",
+  "security_group": "sg-05ed5e86c75a0b2d7",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-12C605AA4G31A",
+  "subnet_id": "subnet-04c3e88d7b75df0e2",
+  "region": "sa-east-1"
+},
+"sa-east-1c": {
+  "image_id": "ami-058141e091292ecf0",
+  "instance_type": "t2.micro",
+  "security_group": "sg-05ed5e86c75a0b2d7",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-12C605AA4G31A",
+  "subnet_id": "subnet-0d84022c800d71dff",
+  "region": "sa-east-1"
+},
+"ca-central-1a": {
+  "image_id": "ami-08a9b721ecc5b0a53",
+  "instance_type": "t2.micro",
+  "security_group": "sg-000b44991e4d1827a",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1CXFSDASKQN5F",
+  "subnet_id": "subnet-09f41d3e9f2185250",
+  "region": "ca-central-1"
+},
+"ca-central-1b": {
+  "image_id": "ami-08a9b721ecc5b0a53",
+  "instance_type": "t2.micro",
+  "security_group": "sg-000b44991e4d1827a",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1CXFSDASKQN5F",
+  "subnet_id": "subnet-07cf7f420a913c156",
+  "region": "ca-central-1"
+},
+"ap-southeast-1a": {
+  "image_id": "ami-0b5a47f8865280111",
+  "instance_type": "t2.micro",
+  "security_group": "sg-04b7e588da20ada5c",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-18WLDJCSJZ0DV",
+  "subnet_id": "subnet-020f80b5499acc757",
+  "region": "ap-southeast-1"
+},
+"ap-southeast-1b": {
+  "image_id": "ami-0b5a47f8865280111",
+  "instance_type": "t2.micro",
+  "security_group": "sg-04b7e588da20ada5c",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-18WLDJCSJZ0DV",
+  "subnet_id": "subnet-0bc590690ab5537de",
+  "region": "ap-southeast-1"
+},
+"ap-southeast-1c": {
+  "image_id": "ami-0b5a47f8865280111",
+  "instance_type": "t2.micro",
+  "security_group": "sg-04b7e588da20ada5c",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-18WLDJCSJZ0DV",
+  "subnet_id": "subnet-0c8d9cb81550e5357",
+  "region": "ap-southeast-1"
+},
+"ap-southeast-2a": {
+  "image_id": "ami-0fb7513bcdc525c3b",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0971ae2f518809e20",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-11NWGQOB1P7NT",
+  "subnet_id": "subnet-09c16d47574c94548",
+  "region": "ap-southeast-2"
+},
+"ap-southeast-2b": {
+  "image_id": "ami-0fb7513bcdc525c3b",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0971ae2f518809e20",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-11NWGQOB1P7NT",
+  "subnet_id": "subnet-0b33227fd40057aa0",
+  "region": "ap-southeast-2"
+},
+"ap-southeast-2c": {
+  "image_id": "ami-0fb7513bcdc525c3b",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0971ae2f518809e20",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-11NWGQOB1P7NT",
+  "subnet_id": "subnet-01fc77946c9249deb",
+  "region": "ap-southeast-2"
+},
+"eu-central-1a": {
+  "image_id": "ami-0ebe657bc328d4e82",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0a667247bfd8ae8fb",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1NWSP62VQEYYM",
+  "subnet_id": "subnet-0ea7f0b6da51c4e8d",
+  "region": "eu-central-1"
+},
+"eu-central-1b": {
+  "image_id": "ami-0ebe657bc328d4e82",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0a667247bfd8ae8fb",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1NWSP62VQEYYM",
+  "subnet_id": "subnet-0ee7fb37987513cec",
+  "region": "eu-central-1"
+},
+"eu-central-1c": {
+  "image_id": "ami-0ebe657bc328d4e82",
+  "instance_type": "t2.micro",
+  "security_group": "sg-0a667247bfd8ae8fb",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-1NWSP62VQEYYM",
+  "subnet_id": "subnet-04c7747af5622acc3",
+  "region": "eu-central-1"
+},
+"us-east-1a": {
+  "image_id": "ami-0c6b1d09930fac512",
+  "instance_type": "t2.micro",
+  "security_group": "sg-069de002b382965e4",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-HMEEUUSET4BO",
+  "subnet_id": "subnet-06b3842584457700b",
+  "region": "us-east-1"
+},
+"us-east-1b": {
+  "image_id": "ami-0c6b1d09930fac512",
+  "instance_type": "t2.micro",
+  "security_group": "sg-069de002b382965e4",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-HMEEUUSET4BO",
+  "subnet_id": "subnet-014bc2813b034674a",
+  "region": "us-east-1"
+},
+"us-east-1c": {
+  "image_id": "ami-0c6b1d09930fac512",
+  "instance_type": "t2.micro",
+  "security_group": "sg-069de002b382965e4",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-HMEEUUSET4BO",
+  "subnet_id": "subnet-051505747aef74eac",
+  "region": "us-east-1"
+},
+"us-east-1d": {
+  "image_id": "ami-0c6b1d09930fac512",
+  "instance_type": "t2.micro",
+  "security_group": "sg-069de002b382965e4",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-HMEEUUSET4BO",
+  "subnet_id": "subnet-061ac193a4b720ed9",
+  "region": "us-east-1"
+},
+"us-east-1e": {
+  "image_id": "ami-0c6b1d09930fac512",
+  "instance_type": "t2.micro",
+  "security_group": "sg-069de002b382965e4",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-HMEEUUSET4BO",
+  "subnet_id": "subnet-032bf623c8389098e",
+  "region": "us-east-1"
+},
+"us-east-1f": {
+  "image_id": "ami-0c6b1d09930fac512",
+  "instance_type": "t2.micro",
+  "security_group": "sg-069de002b382965e4",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-HMEEUUSET4BO",
+  "subnet_id": "subnet-04dcfdb43f3c535e4",
+  "region": "us-east-1"
+},
+"us-east-2a": {
+  "image_id": "ami-0ebbf2179e615c338",
+  "instance_type": "t2.micro",
+  "security_group": "sg-09d03b234f156c585",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-16E2W10XP8BN8",
+  "subnet_id": "subnet-0dfc220ed6ce1a1cc",
+  "region": "us-east-2"
+},
+"us-east-2b": {
+  "image_id": "ami-0ebbf2179e615c338",
+  "instance_type": "t2.micro",
+  "security_group": "sg-09d03b234f156c585",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-16E2W10XP8BN8",
+  "subnet_id": "subnet-010e9fc8e0b3b2995",
+  "region": "us-east-2"
+},
+"us-east-2c": {
+  "image_id": "ami-0ebbf2179e615c338",
+  "instance_type": "t2.micro",
+  "security_group": "sg-09d03b234f156c585",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-16E2W10XP8BN8",
+  "subnet_id": "subnet-0d0d93b029a8d1eac",
+  "region": "us-east-2"
+},
+"us-west-1a": {
+  "image_id": "ami-015954d5e5548d13b",
+  "instance_type": "t2.micro",
+  "security_group": "sg-044c5cca5bd40a72d",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-3YC374CTR72M",
+  "subnet_id": "subnet-0751dc2128c822111",
+  "region": "us-west-1"
+},
+"us-west-1c": {
+  "image_id": "ami-015954d5e5548d13b",
+  "instance_type": "t2.micro",
+  "security_group": "sg-044c5cca5bd40a72d",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-3YC374CTR72M",
+  "subnet_id": "subnet-0b3dae2ef3f969647",
+  "region": "us-west-1"
+},
+"us-west-2a": {
+  "image_id": "ami-0cb72367e98845d43",
+  "instance_type": "t2.micro",
+  "security_group": "sg-017d73129617e5a4a",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-17NDRAUA31F09",
+  "subnet_id": "subnet-0b02e66caee134b2f",
+  "region": "us-west-2"
+},
+"us-west-2b": {
+  "image_id": "ami-0cb72367e98845d43",
+  "instance_type": "t2.micro",
+  "security_group": "sg-017d73129617e5a4a",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-17NDRAUA31F09",
+  "subnet_id": "subnet-0076c7189d7b97bf2",
+  "region": "us-west-2"
+},
+"us-west-2c": {
+  "image_id": "ami-0cb72367e98845d43",
+  "instance_type": "t2.micro",
+  "security_group": "sg-017d73129617e5a4a",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-17NDRAUA31F09",
+  "subnet_id": "subnet-0414c6e68c573db0a",
+  "region": "us-west-2"
+},
+"us-west-2d": {
+  "image_id": "ami-0cb72367e98845d43",
+  "instance_type": "t2.micro",
+  "security_group": "sg-017d73129617e5a4a",
+  "instance_profile": "PingSingleRegionExperiment-InstanceProfileSSM-17NDRAUA31F09",
+  "subnet_id": "subnet-09adae31a3c333d4d",
+  "region": "us-west-2"
+}
+}
