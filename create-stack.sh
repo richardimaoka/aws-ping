@@ -39,12 +39,12 @@ for REGION in $(aws ec2 describe-regions --query "Regions[].RegionName" --output
 do
   if ! aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --region "${REGION}" 2> /dev/null ; then
     echo "Creating a CloudFormation stack=${STACK_NAME} for region=${REGION}"
-    # If it fails, an error message is displayed and it continues to the next REGION
 
     NUM_AVAILABILITY_ZONES=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'] | length(@)")
     VPC_CIDR_BLOCK="10.${SECOND_OCTET}.0.0/16"
     REGION_SUBNET="10.${SECOND_OCTET}"
 
+    # If it fails, an error message is displayed and it continues to the next REGION
     aws cloudformation create-stack \
       --stack-name "${STACK_NAME}" \
       --template-body file://cloudformation-vpc.yaml \

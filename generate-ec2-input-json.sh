@@ -31,7 +31,7 @@ fi
 ######################################
 # 2. Generate JSON
 ######################################
-FILE_NAME=$(tempfile)
+FILE_NAME=$(mktemp)
 
 # Start of JSON
 echo "{" >> "${FILE_NAME}"
@@ -49,19 +49,20 @@ do
   )
   
   OUTPUTS=$(aws cloudformation describe-stacks --stack-name "${STACK_NAME}" --query "Stacks[].Outputs[]" --region "${REGION}") 
+  VPC_ID=$(echo "${OUTPUTS}" | jq -r '.[] | select(.OutputKey=="VPCId") | .OutputValue')
   SECURITY_GROUP_ID=$(echo "${OUTPUTS}" | jq -r '.[] | select(.OutputKey=="SecurityGroup") | .OutputValue')
-  SUBNET_ID=$(echo "${OUTPUTS}" | jq -r '.[] | select(.OutputKey=="Subnet") | .OutputValue')
   IAM_INSTANCE_PROFILE=$(echo "${OUTPUTS}" | jq -r '.[] | select(.OutputKey=="InstanceProfile") | .OutputValue')
 
-  LAST_AZ=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'].ZoneName" --output text | tail -1)
-  for AZ in $(aws ec2 describe-regions --query "AvailabilityZones[?State=='available'].ZoneName" --output text)
+  LAST_AVAILABILITY_ZONE=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'].ZoneName" --output text | tail -1)
+  for AVAILABILITY_ZONE in $(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'].ZoneName" --output text)
   do
-    echo "\"${REGION}\": {" >> "${FILE_NAME}"
+    aws ec2 describe-subnets --query "Subnets[?VpcId=='${VPC_ID}'].SubnetId" --output text
+    echo "\"${AVAILABILITY_ZONE}\": {" >> "${FILE_NAME}"
     echo "  \"image_id\": \"${AMI_LINUX2}\"," >> "${FILE_NAME}"
     echo "  \"security_group\": \"${SECURITY_GROUP_ID}\"," >> "${FILE_NAME}"
     echo "  \"instance_profile\": \"${IAM_INSTANCE_PROFILE}\"," >> "${FILE_NAME}"
     echo "  \"subnet_id\": \"${SUBNET_ID}\"" >> "${FILE_NAME}"
-    if [ "$REGION" = "${LAST_REGION}" ]; then 
+    if [ "${REGION}" = "${LAST_REGION}" ] && [ "${AVAILABILITY_ZONE}" = "${LAST_AVAILABILITY_ZONE}" ]; then
       echo "}" >> "${FILE_NAME}"
     else
       echo "}," >> "${FILE_NAME}"

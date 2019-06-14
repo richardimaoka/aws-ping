@@ -68,11 +68,11 @@ if [ -z "${STACK_NAME}" ] ; then
   ERROR="1"
 fi
 if [ -z "${SOURCE_AZ}" ] ; then
-  >&2 echo "ERROR: option --source-region needs to be passed"
+  >&2 echo "ERROR: option --source-az needs to be passed"
   ERROR="1"
 fi
 if [ -z "${TARGET_AZ}" ] ; then
-  >&2 echo "ERROR: option --target-region needs to be passed"
+  >&2 echo "ERROR: option --target-az needs to be passed"
   ERROR="1"
 fi
 if [ -z "${S3_BUCKET_NAME}" ] ; then
