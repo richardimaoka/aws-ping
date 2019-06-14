@@ -62,6 +62,7 @@ do
     echo "  \"security_group\": \"${SECURITY_GROUP_ID}\","
     echo "  \"instance_profile\": \"${IAM_INSTANCE_PROFILE}\"," 
     echo "  \"subnet_id\": \"${SUBNET_ID}\""
+    echo "  \"region\": \"${REGION}\""
     if [ "${REGION}" = "${LAST_REGION}" ] && [ "${AVAILABILITY_ZONE}" = "${LAST_AVAILABILITY_ZONE}" ]; then
       echo "}"
     else

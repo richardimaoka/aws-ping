@@ -105,6 +105,7 @@ SOURCE_IMAGE_ID=$(echo "${INPUT_JSON}" | jq -r ".\"$SOURCE_AZ\".image_id")
 SOURCE_SECURITY_GROUP_ID=$(echo "${INPUT_JSON}" | jq -r ".\"$SOURCE_AZ\".security_group")
 SOURCE_SUBNET_ID=$(echo "${INPUT_JSON}" | jq -r ".\"$SOURCE_AZ\".subnet_id")
 SOURCE_INSTANCE_PROFILE=$(echo "${INPUT_JSON}" | jq -r ".\"$SOURCE_AZ\".instance_profile")
+SOURCE_REGION=$(echo "${INPUT_JSON}" | jq -r ".\"$SOURCE_AZ\".region")
 
 if ! SOURCE_OUTPUTS=$(aws ec2 run-instances \
   --image-id "${SOURCE_IMAGE_ID}" \
@@ -116,7 +117,7 @@ if ! SOURCE_OUTPUTS=$(aws ec2 run-instances \
   --tag-specifications \
     "ResourceType=instance,Tags=[{Key=experiment-name,Value=${STACK_NAME}}]" \
   --user-data file://user-data.txt \
-  --region "${SOURCE_AZ}"
+  --region "${SOURCE_REGION}"
 ) ; then
   exit 1
 fi
@@ -129,6 +130,7 @@ TARGET_IMAGE_ID=$(echo "${INPUT_JSON}" | jq -r ".\"$TARGET_AZ\".image_id")
 TARGET_SECURITY_GROUP_ID=$(echo "${INPUT_JSON}" | jq -r ".\"$TARGET_AZ\".security_group")
 TARGET_SUBNET_ID=$(echo "${INPUT_JSON}" | jq -r ".\"$TARGET_AZ\".subnet_id")
 TARGET_INSTANCE_PROFILE=$(echo "${INPUT_JSON}" | jq -r ".\"$TARGET_AZ\".instance_profile")
+TARGET_REGION=$(echo "${INPUT_JSON}" | jq -r ".\"$TARGET_AZ\".region")
 
 if ! TARGET_OUTPUTS=$(aws ec2 run-instances \
   --image-id "${TARGET_IMAGE_ID}" \
@@ -140,7 +142,7 @@ if ! TARGET_OUTPUTS=$(aws ec2 run-instances \
   --tag-specifications \
     "ResourceType=instance,Tags=[{Key=experiment-name,Value=${STACK_NAME}}]" \
   --user-data file://user-data.txt \
-  --region "${TARGET_AZ}"
+  --region "${TARGET_REGION}"
 ) ; then
   exit 1
 fi
