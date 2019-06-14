@@ -153,7 +153,7 @@ Resources:
       CidrBlock: !Sub "${RegionSubnet}.5.0/24"
       AvailabilityZone: 
         Fn::Select: 
-          - 3
+          - 4
           - !GetAZs {Ref: "AWS::Region"}
       VpcId: !Ref VPC
       Tags:
@@ -167,7 +167,7 @@ Resources:
       CidrBlock: !Sub "${RegionSubnet}.6.0/24"
       AvailabilityZone: 
         Fn::Select: 
-          - 3
+          - 5
           - !GetAZs {Ref: "AWS::Region"}
       VpcId: !Ref VPC
       Tags:
