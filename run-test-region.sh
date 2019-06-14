@@ -91,7 +91,7 @@ fi
 ######################################
 # 2. main loop
 ######################################
-AVAILABILITY_ZONES=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available']")
+AVAILABILITY_ZONES=$(aws ec2 describe-availability-zones --query "AvailabilityZones[?State=='available'][ZoneName]" --output text --region "${REGION}")
 AVAILABILITY_ZONES_INNER_LOOP="${AVAILABILITY_ZONES}"
 for SOURCE_AVAILABILITY_ZONE in $AVAILABILITY_ZONES
 do
